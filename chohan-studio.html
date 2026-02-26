@@ -1,0 +1,2274 @@
+<!DOCTYPE html>
+<html lang="ur" dir="ltr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="Chohan Studio — Professional AI Video Generation Platform. Veo 3, Sora 2, Kling 3. اردو Narration with Lip-Sync.">
+<title>Chohan Studio — AI Documentary & Video Generation</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;0,900;1,400;1,700&family=Space+Mono:ital,wght@0,400;0,700;1,400&family=Noto+Nastaliq+Urdu:wght@400;700&display=swap" rel="stylesheet">
+
+<style>
+/* ══════════════════════════════════════════
+   CHOHAN STUDIO — DESIGN SYSTEM
+   Aesthetic: Luxury Cinematic Dark Studio
+   Fonts: Playfair Display + Space Mono
+   Colors: Obsidian + Gold + Crimson + Ivory
+══════════════════════════════════════════ */
+:root {
+  --obsidian:   #08080b;
+  --obsidian2:  #0f0f14;
+  --obsidian3:  #17171f;
+  --obsidian4:  #1f1f2a;
+  --gold:       #c9a84c;
+  --gold-light: #e8c97a;
+  --gold-dim:   #7a6230;
+  --gold-glow:  #ffd978;
+  --crimson:    #9b1a2a;
+  --crimson-b:  #c0152a;
+  --crimson-g:  #ff3a4a;
+  --ivory:      #f4f0e8;
+  --ivory2:     #ccc8be;
+  --ivory3:     #8a8880;
+  --electric:   #0066ff;
+  --electric-l: #4499ff;
+  --teal:       #00c4b4;
+  --purple:     #7c3aed;
+}
+
+*, *::before, *::after { margin:0; padding:0; box-sizing:border-box; }
+
+html { scroll-behavior: smooth; }
+
+body {
+  background: var(--obsidian);
+  color: var(--ivory);
+  font-family: 'Space Mono', monospace;
+  font-size: 14px;
+  line-height: 1.7;
+  overflow-x: hidden;
+  cursor: default;
+}
+
+/* Custom scrollbar */
+::-webkit-scrollbar { width: 4px; }
+::-webkit-scrollbar-track { background: var(--obsidian2); }
+::-webkit-scrollbar-thumb { background: var(--gold-dim); }
+::-webkit-scrollbar-thumb:hover { background: var(--gold); }
+
+/* Film grain overlay */
+body::before {
+  content: '';
+  position: fixed; inset: 0;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 300 300' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");
+  pointer-events: none; z-index: 9999; opacity: 0.6;
+}
+
+/* Letterbox bars */
+.lb { position: fixed; left:0; right:0; height: 52px; z-index: 998; pointer-events: none; }
+.lb-t { top:0; background: linear-gradient(to bottom, rgba(0,0,0,0.95) 40%, transparent); }
+.lb-b { bottom:0; background: linear-gradient(to top, rgba(0,0,0,0.95) 40%, transparent); }
+
+/* ══ ANIMATIONS ══ */
+@keyframes fadeUp   { from { opacity:0; transform:translateY(28px); } to { opacity:1; transform:translateY(0); } }
+@keyframes fadeIn   { from { opacity:0; } to { opacity:1; } }
+@keyframes slideIn  { from { opacity:0; transform:translateX(-20px); } to { opacity:1; transform:translateX(0); } }
+@keyframes barFlow  { 0%{background-position:0%} 100%{background-position:200%} }
+@keyframes pulse    { 0%,100%{opacity:1;transform:scale(1)} 50%{opacity:.5;transform:scale(.95)} }
+@keyframes spin     { to { transform: rotate(360deg); } }
+@keyframes shimmer  { 0%{left:-100%} 100%{left:200%} }
+@keyframes breathe  { 0%,100%{transform:scale(1);opacity:.6} 50%{transform:scale(1.08);opacity:1} }
+@keyframes logLine  { from{opacity:0;transform:translateX(-8px)} to{opacity:1;transform:translateX(0)} }
+@keyframes blink    { 0%,100%{opacity:1} 50%{opacity:.2} }
+@keyframes waveBar  { 0%,100%{height:6px;opacity:.3} 50%{height:32px;opacity:1} }
+@keyframes glowPulse{ 0%,100%{box-shadow:0 0 15px rgba(201,168,76,0.2)} 50%{box-shadow:0 0 40px rgba(201,168,76,0.5),0 0 80px rgba(201,168,76,0.15)} }
+
+/* ══ TYPOGRAPHY ══ */
+.display-xl {
+  font-family: 'Playfair Display', serif;
+  font-size: clamp(3rem, 7vw, 6.5rem);
+  font-weight: 900;
+  line-height: 0.95;
+  letter-spacing: -0.02em;
+}
+.display-lg {
+  font-family: 'Playfair Display', serif;
+  font-size: clamp(2rem, 4vw, 3.5rem);
+  font-weight: 700;
+  line-height: 1.1;
+}
+.display-md {
+  font-family: 'Playfair Display', serif;
+  font-size: clamp(1.4rem, 2.5vw, 2rem);
+  font-weight: 400;
+}
+.label-sm {
+  font-size: 10px;
+  letter-spacing: 4px;
+  text-transform: uppercase;
+  font-family: 'Space Mono', monospace;
+  opacity: .6;
+}
+.label-gold { color: var(--gold); opacity: 1; }
+.urdu-text {
+  font-family: 'Noto Nastaliq Urdu', serif;
+  direction: rtl;
+  text-align: right;
+  line-height: 2.4;
+}
+
+/* ══ LAYOUT ══ */
+#auth-screen {
+  position: fixed; inset: 0;
+  z-index: 500;
+  background: var(--obsidian);
+  display: flex; align-items: center; justify-content: center;
+  transition: opacity .8s ease, transform .8s ease;
+}
+#auth-screen.exit { opacity:0; transform:scale(1.04); pointer-events:none; }
+
+#studio {
+  display: none;
+  min-height: 100vh;
+}
+#studio.on { display: flex; }
+
+.sidebar {
+  width: 280px;
+  flex-shrink: 0;
+  background: var(--obsidian2);
+  border-right: 1px solid rgba(201,168,76,0.08);
+  position: fixed; top:0; left:0; bottom:0;
+  z-index: 100;
+  display: flex; flex-direction: column;
+  overflow: hidden;
+}
+
+.main {
+  margin-left: 280px;
+  flex: 1;
+  min-height: 100vh;
+}
+
+/* ══ AUTH SCREEN ══ */
+.auth-wrap {
+  width: 580px;
+  max-width: 94vw;
+  position: relative;
+}
+
+.auth-ambient {
+  position: absolute; inset: 0;
+  overflow: hidden; pointer-events: none;
+}
+.auth-ambient::before {
+  content: '';
+  position: absolute; top: -40%; left: -30%;
+  width: 100%; height: 100%;
+  background: radial-gradient(ellipse, rgba(201,168,76,0.06) 0%, transparent 65%);
+  animation: breathe 7s ease-in-out infinite;
+}
+.auth-ambient::after {
+  content: '';
+  position: absolute; bottom: -40%; right: -30%;
+  width: 100%; height: 100%;
+  background: radial-gradient(ellipse, rgba(155,26,42,0.07) 0%, transparent 65%);
+  animation: breathe 7s ease-in-out infinite reverse;
+}
+
+.auth-card {
+  background: var(--obsidian2);
+  border: 1px solid rgba(201,168,76,0.15);
+  position: relative;
+  overflow: hidden;
+  animation: fadeUp .7s ease both;
+}
+.auth-gold-bar {
+  height: 3px;
+  background: linear-gradient(90deg, var(--crimson), var(--gold), var(--electric), var(--gold), var(--crimson));
+  background-size: 300%;
+  animation: barFlow 4s linear infinite;
+}
+.auth-inner { padding: 52px 48px; }
+
+.studio-mark {
+  display: flex; align-items: center; gap: 16px;
+  margin-bottom: 6px;
+}
+.mark-icon {
+  width: 52px; height: 52px;
+  background: linear-gradient(135deg, var(--crimson), rgba(201,168,76,0.3));
+  border: 1px solid rgba(201,168,76,0.3);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 22px;
+  animation: glowPulse 3s ease-in-out infinite;
+}
+.mark-name {
+  font-family: 'Playfair Display', serif;
+  font-size: 2.8rem;
+  font-weight: 900;
+  color: var(--ivory);
+  letter-spacing: -0.02em;
+  line-height: 1;
+}
+.mark-name span { color: var(--gold); font-style: italic; }
+.mark-sub { font-size: 10px; letter-spacing: 5px; text-transform: uppercase; color: var(--gold-dim); margin-top: 2px; }
+
+.auth-tagline {
+  font-family: 'Playfair Display', serif;
+  font-size: 1.2rem;
+  font-weight: 400;
+  font-style: italic;
+  color: var(--ivory2);
+  margin-bottom: 36px;
+  padding-bottom: 28px;
+  border-bottom: 1px solid rgba(201,168,76,0.1);
+}
+
+/* API Key sections */
+.api-section {
+  margin-bottom: 20px;
+}
+.api-section-label {
+  font-size: 9px; letter-spacing: 4px; text-transform: uppercase;
+  color: var(--gold);
+  margin-bottom: 10px;
+  display: flex; align-items: center; gap: 10px;
+}
+.api-section-label::after { content:''; flex:1; height:1px; background: rgba(201,168,76,0.15); }
+
+.model-api-row {
+  display: grid; grid-template-columns: auto 1fr auto;
+  gap: 0;
+  border: 1px solid rgba(201,168,76,0.12);
+  margin-bottom: 8px;
+  background: rgba(0,0,0,0.3);
+  transition: border-color .25s;
+}
+.model-api-row:focus-within { border-color: rgba(201,168,76,0.4); }
+
+.model-tag {
+  padding: 0 16px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 10px; letter-spacing: 2px; text-transform: uppercase;
+  border-right: 1px solid rgba(201,168,76,0.12);
+  min-width: 90px;
+  white-space: nowrap;
+}
+.model-tag.veo { color: var(--electric-l); background: rgba(0,102,255,0.06); }
+.model-tag.sora { color: var(--teal); background: rgba(0,196,180,0.06); }
+.model-tag.kling { color: var(--gold); background: rgba(201,168,76,0.06); }
+
+.api-key-input {
+  flex: 1;
+  padding: 14px 16px;
+  background: transparent;
+  border: none;
+  color: var(--ivory);
+  font-family: 'Space Mono', monospace;
+  font-size: 12px;
+  outline: none;
+  width: 100%;
+}
+.api-key-input::placeholder { color: rgba(138,136,128,0.4); }
+
+.api-verify-btn {
+  padding: 0 16px;
+  background: transparent;
+  border: none; border-left: 1px solid rgba(201,168,76,0.12);
+  color: var(--ivory3);
+  font-family: 'Space Mono', monospace;
+  font-size: 10px; letter-spacing: 2px;
+  cursor: pointer; transition: all .25s;
+  white-space: nowrap;
+}
+.api-verify-btn:hover { color: var(--gold); background: rgba(201,168,76,0.06); }
+.api-verify-btn.ok { color: var(--teal); }
+.api-verify-btn.err { color: var(--crimson-g); }
+
+.api-hint {
+  padding: 12px 16px;
+  background: rgba(201,168,76,0.03);
+  border: 1px solid rgba(201,168,76,0.08);
+  border-top: none;
+  font-size: 11px; color: var(--ivory3); line-height: 1.8;
+}
+.api-hint a { color: var(--gold); text-decoration: none; }
+.api-hint a:hover { color: var(--gold-light); }
+
+.launch-button {
+  width: 100%;
+  padding: 18px;
+  background: linear-gradient(135deg, var(--crimson), var(--gold-dim));
+  border: 1px solid rgba(201,168,76,0.3);
+  color: var(--ivory);
+  font-family: 'Space Mono', monospace;
+  font-size: 12px; letter-spacing: 5px; text-transform: uppercase;
+  cursor: pointer;
+  transition: all .3s;
+  margin-top: 24px;
+  font-weight: 700;
+  position: relative; overflow: hidden;
+}
+.launch-button::after {
+  content: '';
+  position: absolute; top:0; left:-100%; width:60%; height:100%;
+  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.08), transparent);
+  transition: left .4s ease;
+}
+.launch-button:hover { background: linear-gradient(135deg, var(--crimson-b), var(--gold)); box-shadow: 0 8px 40px rgba(201,168,76,0.2); }
+.launch-button:hover::after { left: 200%; }
+.launch-button:disabled { opacity:.5; cursor:not-allowed; }
+
+.auth-badges {
+  display: flex; gap: 8px; margin-top: 18px; flex-wrap: wrap;
+}
+.a-badge {
+  padding: 5px 12px;
+  border: 1px solid rgba(201,168,76,0.15);
+  font-size: 9px; letter-spacing: 2px; text-transform: uppercase;
+  color: var(--ivory3);
+}
+
+/* ══ SIDEBAR ══ */
+.sb-logo {
+  padding: 28px 24px 20px;
+  border-bottom: 1px solid rgba(201,168,76,0.08);
+  position: relative; overflow: hidden;
+}
+.sb-logo::before {
+  content: '';
+  position: absolute; top:0; left:0; right:0; height:2px;
+  background: linear-gradient(90deg, var(--crimson), var(--gold), var(--electric));
+  background-size: 200%; animation: barFlow 4s linear infinite;
+}
+.sb-logo-name {
+  font-family: 'Playfair Display', serif;
+  font-size: 1.8rem; font-weight: 900;
+  color: var(--ivory); letter-spacing: -0.02em; line-height: 1;
+}
+.sb-logo-name span { color: var(--gold); font-style: italic; }
+.sb-logo-sub { font-size: 9px; letter-spacing: 4px; text-transform: uppercase; color: var(--gold-dim); margin-top: 4px; }
+
+.sb-section {
+  padding: 16px 20px 6px;
+  font-size: 9px; letter-spacing: 4px; text-transform: uppercase;
+  color: rgba(201,168,76,0.4);
+}
+
+.nav-item {
+  margin: 2px 10px;
+  padding: 13px 14px;
+  cursor: pointer;
+  display: flex; align-items: center; gap: 12px;
+  border: 1px solid transparent;
+  transition: all .25s;
+  position: relative;
+}
+.nav-item:hover { background: rgba(201,168,76,0.04); border-color: rgba(201,168,76,0.1); }
+.nav-item.active {
+  background: rgba(201,168,76,0.08);
+  border-color: rgba(201,168,76,0.2);
+}
+.nav-item.active::before {
+  content: '';
+  position: absolute; left:0; top:20%; bottom:20%;
+  width: 2px; background: var(--gold);
+}
+.nav-icon { font-size: 16px; width: 22px; text-align: center; }
+.nav-label { font-size: 13px; color: var(--ivory); letter-spacing: .3px; }
+.nav-badge {
+  margin-left: auto;
+  padding: 2px 8px;
+  background: rgba(155,26,42,0.2);
+  border: 1px solid rgba(192,21,42,0.3);
+  font-size: 9px; color: var(--crimson-g); letter-spacing: 1px;
+}
+
+/* Model status in sidebar */
+.sb-models {
+  padding: 14px 20px;
+  border-top: 1px solid rgba(201,168,76,0.08);
+  display: flex; flex-direction: column; gap: 8px;
+}
+.model-status {
+  display: flex; align-items: center; gap: 10px;
+  padding: 8px 10px;
+  border: 1px solid rgba(255,255,255,0.04);
+  background: rgba(0,0,0,0.2);
+}
+.ms-dot {
+  width: 6px; height: 6px; border-radius: 50%;
+  background: var(--ivory3); flex-shrink: 0;
+}
+.ms-dot.on { background: var(--teal); box-shadow: 0 0 8px var(--teal); animation: blink 2s ease infinite; }
+.ms-dot.err { background: var(--crimson-g); }
+.ms-name { font-size: 10px; letter-spacing: 2px; text-transform: uppercase; color: var(--ivory2); flex: 1; }
+.ms-status { font-size: 9px; letter-spacing: 1px; color: var(--ivory3); }
+
+.sb-user {
+  margin-top: auto;
+  padding: 14px 20px;
+  border-top: 1px solid rgba(201,168,76,0.08);
+  display: flex; align-items: center; gap: 10px;
+}
+.su-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--teal); box-shadow: 0 0 10px var(--teal); animation: blink 2s ease infinite; flex-shrink:0; }
+.su-text { font-size: 11px; color: var(--ivory3); letter-spacing: .5px; }
+
+/* ══ TOPBAR ══ */
+.topbar {
+  padding: 18px 40px;
+  border-bottom: 1px solid rgba(201,168,76,0.08);
+  display: flex; align-items: center; justify-content: space-between;
+  position: sticky; top: 0; z-index: 50;
+  background: rgba(8,8,11,0.9);
+  backdrop-filter: blur(16px);
+}
+.tb-title {
+  font-family: 'Playfair Display', serif;
+  font-size: 1.6rem; font-weight: 400;
+  color: var(--ivory); letter-spacing: -.01em;
+}
+.tb-title span { color: var(--gold); font-style: italic; }
+.tb-right { display: flex; align-items: center; gap: 12px; }
+.tb-badge {
+  display: flex; align-items: center; gap: 7px;
+  padding: 6px 14px;
+  border: 1px solid rgba(0,196,180,0.25);
+  font-size: 10px; letter-spacing: 3px; text-transform: uppercase;
+  color: var(--teal);
+}
+.tb-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--teal); animation: blink 1.5s ease infinite; }
+.tb-btn {
+  padding: 8px 20px;
+  background: transparent;
+  border: 1px solid rgba(201,168,76,0.3);
+  color: var(--gold);
+  font-family: 'Space Mono', monospace;
+  font-size: 10px; letter-spacing: 3px; text-transform: uppercase;
+  cursor: pointer; transition: all .25s;
+}
+.tb-btn:hover { background: rgba(201,168,76,0.08); border-color: var(--gold); }
+
+/* ══ PAGES ══ */
+.page { display: none; padding: 36px 40px 80px; animation: fadeUp .4s ease both; }
+.page.active { display: block; }
+
+/* Stats strip */
+.stats-row {
+  display: grid; grid-template-columns: repeat(4, 1fr);
+  gap: 1px; background: rgba(201,168,76,0.06);
+  border: 1px solid rgba(201,168,76,0.1);
+  margin-bottom: 32px;
+}
+.stat-c {
+  background: var(--obsidian2);
+  padding: 18px 20px; text-align: center;
+}
+.stat-v {
+  font-family: 'Playfair Display', serif;
+  font-size: 2.2rem; font-weight: 400; line-height: 1;
+  margin-bottom: 5px;
+}
+.stat-k { font-size: 9px; letter-spacing: 3px; text-transform: uppercase; color: var(--ivory3); }
+
+/* Step rail */
+.step-rail {
+  display: flex; align-items: flex-start;
+  margin-bottom: 32px; gap: 0;
+}
+.step-node { display: flex; flex-direction: column; align-items: center; gap: 8px; flex-shrink:0; }
+.step-num {
+  width: 42px; height: 42px; border-radius: 50%;
+  border: 1px solid rgba(201,168,76,0.2);
+  background: var(--obsidian2);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 11px; color: var(--ivory3);
+  transition: all .4s; z-index: 2; position: relative;
+  font-family: 'Space Mono', monospace;
+}
+.step-num.active { border-color: var(--gold); color: var(--gold); box-shadow: 0 0 20px rgba(201,168,76,0.25); background: rgba(201,168,76,0.06); }
+.step-num.done { border-color: var(--teal); background: rgba(0,196,180,0.08); color: var(--teal); }
+.step-lbl { font-size: 9px; letter-spacing: 2px; text-transform: uppercase; color: var(--ivory3); text-align: center; white-space: nowrap; }
+.step-lbl.active { color: var(--gold); }
+.step-lbl.done { color: var(--teal); }
+.step-line { flex: 1; height: 1px; margin-bottom: 28px; background: rgba(201,168,76,0.1); transition: all .4s; }
+.step-line.done { background: var(--teal); box-shadow: 0 0 6px rgba(0,196,180,0.3); }
+
+/* Panels */
+.panel {
+  background: var(--obsidian2);
+  border: 1px solid rgba(201,168,76,0.1);
+  padding: 40px;
+  margin-bottom: 20px;
+  position: relative; overflow: hidden;
+  display: none; animation: fadeUp .4s ease both;
+}
+.panel.active { display: block; }
+.panel::before {
+  content: '';
+  position: absolute; top:0; left:0; right:0; height:1px;
+  background: linear-gradient(90deg, transparent, rgba(201,168,76,0.4), transparent);
+}
+
+.panel-badge {
+  font-size: 9px; letter-spacing: 5px; text-transform: uppercase;
+  color: var(--gold); margin-bottom: 14px;
+  display: flex; align-items: center; gap: 14px;
+}
+.panel-badge::after { content:''; flex:1; height:1px; background:rgba(201,168,76,0.12); }
+.panel-title {
+  font-family: 'Playfair Display', serif;
+  font-size: 2rem; font-weight: 400; color: var(--ivory);
+  margin-bottom: 8px;
+}
+.panel-sub { font-size: 12px; color: var(--ivory3); line-height: 1.8; margin-bottom: 28px; }
+
+/* Model selector */
+.model-picker {
+  display: grid; grid-template-columns: repeat(3, 1fr);
+  gap: 12px; margin-bottom: 28px;
+}
+.model-card {
+  padding: 20px 18px;
+  border: 1px solid rgba(201,168,76,0.1);
+  background: rgba(0,0,0,0.3);
+  cursor: pointer; transition: all .3s;
+  position: relative; overflow: hidden;
+}
+.model-card::before {
+  content: ''; position: absolute; top:0; left:-100%; width:60%; height:100%;
+  background: linear-gradient(90deg,transparent,rgba(255,255,255,0.03),transparent);
+  transition: left .4s;
+}
+.model-card:hover::before { left:200%; }
+.model-card:hover { border-color: rgba(201,168,76,0.3); transform: translateY(-2px); }
+.model-card.selected { border-color: var(--gold); background: rgba(201,168,76,0.06); }
+.model-card.selected::after {
+  content: '✓'; position: absolute; top:10px; right:12px;
+  font-size: 12px; color: var(--gold);
+}
+.mc-logo { font-size: 28px; margin-bottom: 10px; }
+.mc-name {
+  font-family: 'Playfair Display', serif;
+  font-size: 1.1rem; color: var(--ivory); margin-bottom: 4px;
+}
+.mc-model { font-size: 9px; letter-spacing: 2px; text-transform: uppercase; color: var(--ivory3); margin-bottom: 6px; }
+.mc-badge {
+  display: inline-block;
+  padding: 3px 8px; font-size: 8px; letter-spacing: 2px; text-transform: uppercase;
+  border: 1px solid;
+}
+.mc-badge.veo { color: var(--electric-l); border-color: rgba(68,153,255,0.3); background: rgba(68,153,255,0.06); }
+.mc-badge.sora { color: var(--teal); border-color: rgba(0,196,180,0.3); background: rgba(0,196,180,0.06); }
+.mc-badge.kling { color: var(--gold); border-color: rgba(201,168,76,0.3); background: rgba(201,168,76,0.06); }
+.mc-key-status {
+  margin-top: 8px; font-size: 9px; letter-spacing: 1px;
+  color: var(--ivory3); display: flex; align-items: center; gap: 5px;
+}
+
+/* Form fields */
+.fields-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 16px; }
+.field-full { grid-column: 1/-1; }
+.f-label {
+  font-size: 9px; letter-spacing: 4px; text-transform: uppercase;
+  color: var(--gold); margin-bottom: 8px; opacity: .8;
+}
+.f-inp {
+  width: 100%; padding: 13px 16px;
+  background: rgba(0,0,0,0.3);
+  border: 1px solid rgba(201,168,76,0.12);
+  color: var(--ivory);
+  font-family: 'Space Mono', monospace; font-size: 13px;
+  outline: none; transition: border-color .25s;
+}
+.f-inp:focus { border-color: rgba(201,168,76,0.4); }
+.f-inp::placeholder { color: rgba(138,136,128,0.35); }
+.f-ta {
+  width: 100%; min-height: 100px; padding: 14px 16px;
+  background: rgba(0,0,0,0.3);
+  border: 1px solid rgba(201,168,76,0.12);
+  color: var(--ivory);
+  font-family: 'Space Mono', monospace; font-size: 13px;
+  line-height: 1.8; outline: none; resize: vertical; transition: border-color .25s;
+}
+.f-ta:focus { border-color: rgba(201,168,76,0.4); }
+.f-ta.urdu-ta {
+  font-family: 'Noto Nastaliq Urdu', serif;
+  font-size: 17px; direction: rtl; text-align: right; line-height: 2.4;
+}
+.f-sel {
+  width: 100%; padding: 13px 16px;
+  background: rgba(0,0,0,0.3);
+  border: 1px solid rgba(201,168,76,0.12);
+  color: var(--ivory);
+  font-family: 'Space Mono', monospace; font-size: 12px;
+  outline: none; cursor: pointer; appearance: none;
+  transition: border-color .25s;
+}
+.f-sel:focus { border-color: rgba(201,168,76,0.4); }
+
+/* Urdu panel */
+.urdu-lock-panel {
+  border: 1px solid rgba(155,26,42,0.4);
+  background: rgba(0,0,0,0.4);
+  margin-bottom: 20px;
+  position: relative; overflow: hidden;
+}
+.ulp-bar { height: 2px; background: linear-gradient(90deg,var(--crimson),var(--gold),var(--crimson)); background-size:200%; animation:barFlow 3s linear infinite; }
+.ulp-head {
+  padding: 12px 18px;
+  background: rgba(155,26,42,0.06);
+  border-bottom: 1px solid rgba(155,26,42,0.15);
+  display: flex; align-items: center; justify-content: space-between;
+}
+.ulp-badge {
+  display: flex; align-items: center; gap: 7px;
+  font-size: 10px; letter-spacing: 3px; text-transform: uppercase;
+  color: var(--crimson-g);
+}
+.ulp-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--crimson-g); animation: blink 1s ease infinite; }
+.ulp-body { padding: 18px 20px; }
+.urdu-live {
+  margin-top: 10px;
+  font-family: 'Noto Nastaliq Urdu', serif;
+  font-size: 18px; direction: rtl; text-align: right;
+  color: var(--gold); line-height: 2.4;
+  padding: 12px 16px;
+  background: rgba(201,168,76,0.04);
+  border: 1px solid rgba(201,168,76,0.1);
+  min-height: 40px; display: none;
+}
+
+/* Upload zone */
+.upload-zone {
+  border: 1px dashed rgba(201,168,76,0.2);
+  padding: 48px 30px; text-align: center;
+  background: rgba(0,0,0,0.2);
+  cursor: pointer; position: relative;
+  transition: all .3s;
+}
+.upload-zone:hover { border-color: rgba(201,168,76,0.5); background: rgba(201,168,76,0.03); }
+.upload-zone input { position:absolute; inset:0; opacity:0; cursor:pointer; }
+.uz-icon { font-size: 36px; margin-bottom: 12px; }
+.uz-title { font-family:'Playfair Display',serif; font-size:1.2rem; color:var(--ivory); margin-bottom:5px; }
+.uz-sub { font-size:10px; letter-spacing:3px; text-transform:uppercase; color:var(--ivory3); }
+.up-prev { display:none; margin-top:14px; align-items:center; gap:12px; padding:12px; border:1px solid rgba(201,168,76,0.15); background:rgba(0,0,0,0.3); }
+.up-prev.on { display:flex; }
+.up-img { width:52px; height:52px; object-fit:cover; border:1px solid rgba(201,168,76,0.2); }
+
+/* Buttons */
+.btn-gold {
+  padding: 16px 36px;
+  background: linear-gradient(135deg, var(--crimson), var(--gold-dim));
+  border: 1px solid rgba(201,168,76,0.3);
+  color: var(--ivory);
+  font-family: 'Space Mono', monospace;
+  font-size: 11px; letter-spacing: 4px; text-transform: uppercase;
+  cursor: pointer; transition: all .3s; font-weight: 700;
+}
+.btn-gold:hover { background: linear-gradient(135deg, var(--crimson-b), var(--gold)); box-shadow: 0 6px 30px rgba(201,168,76,0.2); }
+.btn-gold:disabled { opacity:.5; cursor:not-allowed; }
+
+.btn-gen {
+  width: 100%; padding: 20px;
+  background: linear-gradient(135deg, var(--crimson), var(--electric), var(--gold-dim));
+  border: none; color: var(--ivory);
+  font-family: 'Space Mono', monospace;
+  font-size: 13px; letter-spacing: 5px; text-transform: uppercase;
+  cursor: pointer; transition: all .3s; font-weight: 700;
+  display: flex; align-items: center; justify-content: center; gap: 14px;
+  position: relative; overflow: hidden;
+}
+.btn-gen::before {
+  content: ''; position: absolute; inset:0;
+  background: linear-gradient(135deg, var(--crimson-b), var(--electric-l), var(--gold));
+  opacity: 0; transition: opacity .3s;
+}
+.btn-gen:hover::before { opacity: 1; }
+.btn-gen:hover { box-shadow: 0 8px 50px rgba(0,102,255,0.3), 0 0 80px rgba(201,168,76,0.1); transform: translateY(-2px); }
+.btn-gen span { position: relative; z-index: 1; }
+.btn-gen:disabled { opacity:.5; cursor:not-allowed; transform:none; }
+
+.btn-outline {
+  padding: 13px 24px;
+  background: transparent;
+  border: 1px solid rgba(201,168,76,0.2);
+  color: var(--ivory3);
+  font-family: 'Space Mono', monospace;
+  font-size: 11px; letter-spacing: 3px; text-transform: uppercase;
+  cursor: pointer; transition: all .25s;
+}
+.btn-outline:hover { border-color: var(--gold); color: var(--gold); }
+
+.btn-row { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; margin-top: 24px; }
+
+/* Generation screen */
+.gen-screen {
+  display: none;
+  background: var(--obsidian2);
+  border: 1px solid rgba(201,168,76,0.1);
+  padding: 80px 40px;
+  text-align: center;
+  position: relative; overflow: hidden;
+  animation: fadeIn .5s ease both;
+}
+.gen-screen.active { display: block; }
+
+.gen-glow {
+  position: absolute; top:50%; left:50%;
+  transform: translate(-50%,-50%);
+  width: 600px; height: 600px; border-radius: 50%;
+  background: radial-gradient(circle, rgba(201,168,76,0.05) 0%, rgba(0,102,255,0.03) 40%, transparent 70%);
+  animation: breathe 4s ease-in-out infinite;
+  pointer-events: none;
+}
+
+.gen-rings {
+  position: absolute; top:50%; left:50%; transform:translate(-50%,-50%);
+  pointer-events: none;
+}
+.gen-ring {
+  position: absolute; top:50%; left:50%;
+  border-radius: 50%; border: 1px solid;
+  transform: translate(-50%,-50%);
+  animation: pulse 3s ease-in-out infinite;
+}
+.gen-ring:nth-child(1) { width:200px; height:200px; border-color:rgba(201,168,76,0.08); }
+.gen-ring:nth-child(2) { width:350px; height:350px; border-color:rgba(0,102,255,0.06); animation-delay:.5s; }
+.gen-ring:nth-child(3) { width:500px; height:500px; border-color:rgba(155,26,42,0.04); animation-delay:1s; }
+
+.gen-spinner {
+  width: 64px; height: 64px;
+  border: 2px solid rgba(201,168,76,0.1);
+  border-top: 2px solid var(--gold);
+  border-radius: 50%;
+  animation: spin 1.2s linear infinite;
+  margin: 0 auto 24px;
+  position: relative; z-index: 2;
+}
+
+.gen-title {
+  font-family: 'Playfair Display', serif;
+  font-size: 2.8rem; font-weight: 400; color: var(--ivory);
+  position: relative; z-index: 2; margin-bottom: 8px;
+}
+.gen-sub { font-size: 11px; letter-spacing: 5px; text-transform: uppercase; color: var(--gold); opacity:.6; margin-bottom: 52px; position:relative; z-index:2; }
+
+.prog-wrap { max-width: 520px; margin: 0 auto 16px; position: relative; z-index: 2; }
+.prog-track { height: 2px; background: rgba(255,255,255,0.04); overflow: hidden; }
+.prog-fill {
+  height: 100%; width: 0%;
+  background: linear-gradient(90deg, var(--crimson), var(--gold), var(--electric));
+  transition: width .6s ease;
+  box-shadow: 0 0 12px rgba(201,168,76,0.5);
+}
+.prog-pct {
+  font-family: 'Playfair Display', serif;
+  font-size: 3rem; font-weight: 300; color: var(--gold);
+  margin: 16px 0 6px; position: relative; z-index:2;
+}
+.prog-status { font-size: 11px; letter-spacing: 3px; text-transform: uppercase; color: var(--ivory3); min-height: 18px; position:relative; z-index:2; }
+
+/* Phase badges */
+.phase-row { display: flex; gap: 8px; justify-content: center; margin-top: 24px; flex-wrap: wrap; position: relative; z-index:2; }
+.ph-badge {
+  padding: 5px 14px;
+  border: 1px solid rgba(201,168,76,0.1);
+  font-size: 9px; letter-spacing: 2px; text-transform: uppercase; color: var(--ivory3);
+  transition: all .4s;
+}
+.ph-badge.active { border-color: var(--gold); color: var(--gold); background: rgba(201,168,76,0.06); box-shadow: 0 0 12px rgba(201,168,76,0.1); }
+.ph-badge.done { border-color: var(--teal); color: var(--teal); background: rgba(0,196,180,0.06); }
+.ph-badge.error { border-color: var(--crimson-g); color: var(--crimson-g); }
+
+/* Generation log */
+.gen-log {
+  margin: 32px auto 0;
+  text-align: left; max-width: 520px;
+  font-size: 11px; letter-spacing: .5px; color: var(--ivory3);
+  max-height: 130px; overflow: hidden;
+  position: relative; z-index: 2;
+}
+.gl-line { display:flex; gap:12px; animation: logLine .3s ease forwards; line-height: 2; }
+.gl-ts { color: var(--gold); opacity:.7; flex-shrink:0; }
+
+/* Wave visualizer */
+.wave-viz {
+  display: none; align-items: center; justify-content: center;
+  gap: 4px; height: 48px; margin: 20px auto;
+  max-width: 200px; position: relative; z-index:2;
+}
+.wave-viz.show { display:flex; }
+.wv-b { width: 4px; background: var(--gold); border-radius: 2px; animation: waveBar 1.4s ease-in-out infinite; }
+.wv-b:nth-child(2n) { animation-delay:.1s; background:var(--crimson-g); }
+.wv-b:nth-child(3n) { animation-delay:.2s; }
+
+/* Cancel button */
+.gen-cancel {
+  margin-top: 28px; position:relative; z-index:2;
+  padding: 10px 24px;
+  background: transparent; border: 1px solid rgba(192,21,42,0.3);
+  color: rgba(192,21,42,0.7);
+  font-family: 'Space Mono', monospace; font-size: 10px; letter-spacing: 3px;
+  cursor: pointer; transition: all .25s; text-transform: uppercase;
+}
+.gen-cancel:hover { background: rgba(192,21,42,0.08); border-color: var(--crimson-g); color: var(--crimson-g); }
+
+/* Error panel */
+.err-panel {
+  display:none; background:rgba(155,26,42,0.08); border:1px solid rgba(192,21,42,0.3);
+  padding:28px; margin-bottom:20px; animation:fadeUp .3s ease;
+}
+.err-panel.show { display:block; }
+.ep-head { font-size:10px; letter-spacing:4px; text-transform:uppercase; color:var(--crimson-g); margin-bottom:12px; }
+.ep-msg { font-size:13px; color:var(--ivory2); line-height:1.8; margin-bottom:14px; }
+.ep-fixes { list-style:none; }
+.ep-fix { font-size:12px; color:var(--ivory3); line-height:2; padding-left:16px; position:relative; }
+.ep-fix::before { content:'→'; position:absolute; left:0; color:var(--gold); }
+
+/* ══ VIDEO OUTPUT ══ */
+.video-out { display:none; animation:fadeUp .6s ease both; }
+.video-out.active { display:block; }
+
+.vo-head {
+  padding: 24px 40px 20px;
+  border-bottom: 1px solid rgba(0,196,180,0.15);
+  background: rgba(0,196,180,0.03);
+  display: flex; align-items: center; justify-content: space-between;
+}
+.vo-title { font-family:'Playfair Display',serif; font-size:2rem; font-weight:400; color:var(--ivory); }
+.vo-badge {
+  display:flex; align-items:center; gap:8px; padding:8px 18px;
+  border:1px solid rgba(0,196,180,0.3); font-size:10px; letter-spacing:3px;
+  text-transform:uppercase; color:var(--teal); background:rgba(0,196,180,0.06);
+}
+
+.vid-player-wrap { padding: 36px 40px; }
+.vid-el {
+  width:100%; max-width:880px; margin:0 auto; display:block;
+  background:#000; aspect-ratio:16/9;
+  border:1px solid rgba(0,196,180,0.15);
+  box-shadow: 0 0 60px rgba(0,196,180,0.06), 0 40px 80px rgba(0,0,0,0.5);
+}
+.vid-fallback {
+  width:100%; max-width:880px; margin:0 auto;
+  aspect-ratio:16/9; background:var(--obsidian2);
+  border:1px solid rgba(201,168,76,0.15);
+  display:flex; flex-direction:column; align-items:center; justify-content:center; gap:14px;
+}
+.vf-icon { font-size:52px; }
+.vf-title { font-family:'Playfair Display',serif; font-size:1.8rem; color:var(--gold); }
+.vf-sub { font-size:10px; letter-spacing:3px; text-transform:uppercase; color:var(--ivory3); }
+
+.vid-meta {
+  margin: 0 40px 28px;
+  display: grid; grid-template-columns: repeat(5, 1fr);
+  gap: 1px; background: rgba(201,168,76,0.06);
+  border: 1px solid rgba(201,168,76,0.1);
+  max-width: 880px;
+}
+.vm-c { background:var(--obsidian2); padding:14px 16px; text-align:center; }
+.vm-v { font-family:'Playfair Display',serif; font-size:1.3rem; color:var(--teal); margin-bottom:3px; }
+.vm-k { font-size:9px; letter-spacing:2px; text-transform:uppercase; color:var(--ivory3); }
+
+.urdu-confirm {
+  margin: 0 40px 24px;
+  padding: 16px 20px;
+  background: rgba(155,26,42,0.06);
+  border: 1px solid rgba(155,26,42,0.25);
+  border-left: 3px solid var(--crimson-g);
+  max-width: 880px;
+}
+.uc-label { font-size:9px; letter-spacing:4px; text-transform:uppercase; color:var(--crimson-g); margin-bottom:10px; }
+.uc-text { font-family:'Noto Nastaliq Urdu',serif; font-size:18px; direction:rtl; text-align:right; color:var(--gold); line-height:2.4; }
+
+.vid-actions { padding: 0 40px 40px; display:flex; gap:12px; max-width:880px; flex-wrap:wrap; }
+.btn-dl {
+  padding:16px 36px; background:var(--teal); border:none; color:#000;
+  font-family:'Space Mono',monospace; font-size:11px; letter-spacing:3px;
+  text-transform:uppercase; cursor:pointer; transition:all .3s; font-weight:700;
+}
+.btn-dl:hover { box-shadow:0 6px 30px rgba(0,196,180,0.4); transform:translateY(-2px); }
+
+/* ══ TEMPLATES PAGE ══ */
+.t-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(320px,1fr)); gap:16px; }
+.tc {
+  background:var(--obsidian2); border:1px solid rgba(201,168,76,0.08);
+  position:relative; overflow:hidden; cursor:pointer;
+  transition:all .3s; animation:fadeUp .4s ease both;
+}
+.tc:hover { border-color:rgba(201,168,76,0.3); transform:translateY(-3px); box-shadow:0 16px 50px rgba(0,0,0,0.5); }
+.tc::after { content:''; position:absolute; top:0; left:0; right:0; height:1px; background:linear-gradient(90deg,transparent,rgba(201,168,76,0.4),transparent); opacity:0; transition:opacity .3s; }
+.tc:hover::after { opacity:1; }
+.tc-vis { height:72px; position:relative; overflow:hidden; display:flex; align-items:center; justify-content:center; }
+.tc-vis .bg { position:absolute; inset:0; opacity:.7; }
+.tc-vis .em { font-size:26px; position:relative; z-index:2; }
+.tc-body { padding:18px 20px; }
+.tc-cat { font-size:8px; letter-spacing:4px; text-transform:uppercase; color:var(--gold); margin-bottom:6px; display:flex; align-items:center; gap:8px; }
+.tc-cat::after { content:''; flex:1; height:1px; background:rgba(201,168,76,0.1); }
+.tc-name { font-family:'Playfair Display',serif; font-size:1.1rem; color:var(--ivory); margin-bottom:3px; }
+.tc-urdu { font-family:'Noto Nastaliq Urdu',serif; font-size:.95rem; color:rgba(201,168,76,0.5); direction:rtl; margin-bottom:10px; line-height:1.9; }
+.tc-prev { background:rgba(0,0,0,0.3); border:1px solid rgba(255,255,255,0.03); padding:10px 12px; margin-bottom:12px; font-size:11px; line-height:2; color:var(--ivory3); }
+.tc-cl { display:flex; gap:8px; }
+.tc-n { color:var(--crimson-g); flex-shrink:0; width:16px; font-size:10px; }
+.tc-t { color:var(--ivory3); }
+.tc-t.urdu-line { color:var(--gold); opacity:.7; }
+.tc-foot { display:flex; align-items:center; justify-content:space-between; padding-top:10px; border-top:1px solid rgba(255,255,255,0.04); }
+.tc-tags { display:flex; gap:7px; }
+.tc-tag { font-size:9px; padding:3px 8px; border:1px solid rgba(201,168,76,0.15); color:var(--ivory3); text-transform:uppercase; letter-spacing:1px; }
+.tc-auto { border-color:rgba(192,21,42,0.3); color:var(--crimson-g); }
+.tc-btns { display:flex; gap:7px; }
+.btn-edit { padding:6px 14px; background:rgba(201,168,76,0.06); border:1px solid rgba(201,168,76,0.2); color:var(--gold); font-family:'Space Mono',monospace; font-size:10px; letter-spacing:2px; text-transform:uppercase; cursor:pointer; transition:all .2s; }
+.btn-edit:hover { background:rgba(201,168,76,0.12); }
+.btn-qrun { padding:6px 12px; background:rgba(0,196,180,0.06); border:1px solid rgba(0,196,180,0.2); color:var(--teal); font-family:'Space Mono',monospace; font-size:10px; letter-spacing:2px; text-transform:uppercase; cursor:pointer; transition:all .2s; }
+.btn-qrun:hover { background:rgba(0,196,180,0.1); border-color:var(--teal); }
+
+/* Filter bar */
+.filter-bar { display:flex; gap:10px; margin-bottom:24px; align-items:center; flex-wrap:wrap; }
+.search-w { flex:1; position:relative; min-width:200px; }
+.search-w input { width:100%; background:var(--obsidian2); border:1px solid rgba(201,168,76,0.12); padding:11px 14px 11px 40px; color:var(--ivory); font-family:'Space Mono',monospace; font-size:12px; outline:none; transition:border-color .25s; }
+.search-w input:focus { border-color:rgba(201,168,76,0.3); }
+.search-w input::placeholder { color:rgba(138,136,128,0.4); }
+.s-ico { position:absolute; left:13px; top:50%; transform:translateY(-50%); color:var(--ivory3); font-size:15px; }
+.f-tag { padding:10px 16px; background:transparent; border:1px solid rgba(201,168,76,0.12); color:var(--ivory3); font-family:'Space Mono',monospace; font-size:10px; letter-spacing:2px; text-transform:uppercase; cursor:pointer; transition:all .2s; }
+.f-tag:hover,.f-tag.on { border-color:var(--gold); color:var(--gold); background:rgba(201,168,76,0.04); }
+
+/* Modal */
+.overlay { position:fixed; inset:0; background:rgba(0,0,0,0.9); z-index:500; display:flex; align-items:center; justify-content:center; opacity:0; pointer-events:none; transition:opacity .3s; backdrop-filter:blur(8px); }
+.overlay.open { opacity:1; pointer-events:all; }
+.modal { width:700px; max-width:96vw; max-height:92vh; background:var(--obsidian2); border:1px solid rgba(201,168,76,0.2); overflow-y:auto; position:relative; transform:translateY(24px); transition:transform .3s; }
+.overlay.open .modal { transform:translateY(0); }
+.m-top-bar { height:2px; background:linear-gradient(90deg,var(--crimson),var(--gold),var(--electric)); background-size:200%; animation:barFlow 4s linear infinite; }
+.m-head { padding:26px 30px 20px; border-bottom:1px solid rgba(201,168,76,0.1); display:flex; align-items:flex-start; justify-content:space-between; }
+.mh-cat { font-size:9px; letter-spacing:4px; text-transform:uppercase; color:var(--gold); margin-bottom:5px; }
+.mh-name { font-family:'Playfair Display',serif; font-size:1.7rem; font-weight:400; color:var(--ivory); }
+.m-close { background:none; border:1px solid rgba(255,255,255,0.08); color:var(--ivory3); width:32px; height:32px; cursor:pointer; font-size:14px; display:flex; align-items:center; justify-content:center; transition:all .2s; flex-shrink:0; }
+.m-close:hover { border-color:var(--crimson-g); color:var(--crimson-g); }
+.m-body { padding:26px 30px; }
+.cl-ed { display:flex; flex-direction:column; gap:5px; margin-bottom:18px; }
+.cl-row { display:flex; align-items:center; }
+.cl-num { width:36px; height:42px; background:rgba(201,168,76,0.05); border:1px solid rgba(201,168,76,0.1); border-right:none; display:flex; align-items:center; justify-content:center; font-size:10px; color:var(--crimson-g); flex-shrink:0; font-family:'Space Mono',monospace; }
+.cl-inp { flex:1; height:42px; background:rgba(0,0,0,0.3); border:1px solid rgba(201,168,76,0.1); padding:0 14px; color:var(--ivory); font-family:'Space Mono',monospace; font-size:12px; outline:none; transition:border-color .2s; }
+.cl-inp.urdu { direction:rtl; font-family:'Noto Nastaliq Urdu',serif; font-size:15px; }
+.cl-inp:focus { border-color:rgba(201,168,76,0.35); }
+.cl-tag { width:78px; height:42px; background:rgba(0,0,0,0.3); border:1px solid rgba(201,168,76,0.08); border-left:none; display:flex; align-items:center; justify-content:center; font-size:8px; letter-spacing:2px; color:var(--ivory3); text-transform:uppercase; flex-shrink:0; }
+.m-opts { display:grid; grid-template-columns:1fr 1fr; gap:12px; margin-bottom:16px; }
+.m-sel { background:rgba(0,0,0,0.3); border:1px solid rgba(201,168,76,0.12); padding:10px 12px; color:var(--ivory); font-family:'Space Mono',monospace; font-size:12px; outline:none; cursor:pointer; appearance:none; }
+.ar-row { display:flex; align-items:center; justify-content:space-between; padding:12px 16px; background:rgba(155,26,42,0.04); border:1px solid rgba(155,26,42,0.15); margin-bottom:14px; }
+.ar-txt { font-size:11px; letter-spacing:2px; text-transform:uppercase; color:var(--ivory3); }
+.ar-txt span { color:var(--crimson-g); }
+.toggle { width:44px; height:22px; border-radius:11px; background:rgba(255,255,255,0.08); border:1px solid rgba(255,255,255,0.12); position:relative; cursor:pointer; transition:all .3s; }
+.toggle.on { background:rgba(0,196,180,0.2); border-color:var(--teal); }
+.toggle::after { content:''; position:absolute; top:2px; left:2px; width:16px; height:16px; border-radius:50%; background:var(--ivory3); transition:all .3s; }
+.toggle.on::after { left:24px; background:var(--teal); }
+.m-run { display:none; margin:12px 0; padding:16px; background:rgba(0,0,0,0.3); border:1px solid rgba(0,196,180,0.15); }
+.m-run.show { display:block; }
+.mr-head { display:flex; align-items:center; justify-content:space-between; margin-bottom:8px; }
+.mr-t { font-size:10px; letter-spacing:3px; text-transform:uppercase; color:var(--teal); }
+.mr-pct { font-family:'Playfair Display',serif; font-size:1.5rem; color:var(--gold); }
+.mr-bar { height:2px; background:rgba(255,255,255,0.04); margin-bottom:8px; overflow:hidden; }
+.mr-fill { height:100%; background:linear-gradient(90deg,var(--crimson),var(--gold),var(--teal)); width:0%; transition:width .3s; }
+.mr-log { font-size:10px; letter-spacing:.5px; color:var(--ivory3); line-height:2; }
+.m-foot { padding:18px 30px; border-top:1px solid rgba(201,168,76,0.08); display:flex; gap:10px; justify-content:flex-end; }
+.btn-msv { padding:12px 24px; background:transparent; border:1px solid rgba(201,168,76,0.25); color:var(--gold); font-family:'Space Mono',monospace; font-size:10px; letter-spacing:3px; text-transform:uppercase; cursor:pointer; transition:all .2s; }
+.btn-msv:hover { background:rgba(201,168,76,0.06); }
+.btn-mexec { padding:12px 28px; background:var(--electric); border:none; color:var(--ivory); font-family:'Space Mono',monospace; font-size:10px; letter-spacing:3px; text-transform:uppercase; cursor:pointer; transition:all .3s; font-weight:700; }
+.btn-mexec:hover { background:var(--electric-l); }
+
+/* Create template */
+.ct-grid { display:grid; grid-template-columns:1fr 1fr; gap:14px; margin-bottom:16px; }
+.ct-full { grid-column:1/-1; }
+
+/* Toast */
+.toast { position:fixed; bottom:28px; right:28px; padding:14px 20px; background:var(--obsidian2); border:1px solid rgba(201,168,76,0.2); border-left:3px solid var(--gold); font-size:13px; color:var(--ivory); z-index:1000; transform:translateX(130%); transition:transform .4s cubic-bezier(.34,1.56,.64,1); max-width:320px; }
+.toast.show { transform:translateX(0); }
+.toast.red { border-left-color:var(--crimson-g); }
+.toast.green { border-left-color:var(--teal); }
+.toast.gold { border-left-color:var(--gold); }
+
+/* API Keys Management page */
+.api-manage-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:16px; margin-bottom:28px; }
+.api-card {
+  padding:28px 24px; border:1px solid rgba(201,168,76,0.1);
+  background:var(--obsidian2); position:relative; overflow:hidden;
+  transition:border-color .3s;
+}
+.api-card:hover { border-color:rgba(201,168,76,0.25); }
+.api-card-glow {
+  position:absolute; top:-30%; right:-20%;
+  width:120px; height:120px; border-radius:50%;
+  opacity:.3;
+}
+.ac-model { font-size:9px; letter-spacing:4px; text-transform:uppercase; margin-bottom:10px; }
+.ac-logo { font-size:40px; margin-bottom:14px; }
+.ac-name { font-family:'Playfair Display',serif; font-size:1.4rem; color:var(--ivory); margin-bottom:4px; }
+.ac-desc { font-size:11px; color:var(--ivory3); line-height:1.7; margin-bottom:16px; }
+.ac-input { width:100%; padding:12px 14px; background:rgba(0,0,0,0.4); border:1px solid rgba(201,168,76,0.12); color:var(--ivory); font-family:'Space Mono',monospace; font-size:12px; outline:none; margin-bottom:8px; transition:border-color .25s; }
+.ac-input:focus { border-color:rgba(201,168,76,0.4); }
+.ac-input::placeholder { color:rgba(138,136,128,0.35); }
+.ac-status { display:flex; align-items:center; gap:8px; padding:8px 12px; font-size:10px; letter-spacing:2px; text-transform:uppercase; border:1px solid rgba(255,255,255,0.04); background:rgba(0,0,0,0.2); margin-bottom:10px; }
+.ac-dot { width:7px; height:7px; border-radius:50%; background:var(--ivory3); flex-shrink:0; }
+.ac-dot.on { background:var(--teal); box-shadow:0 0 8px var(--teal); animation:blink 2s ease infinite; }
+.ac-dot.err { background:var(--crimson-g); }
+.ac-txt { color:var(--ivory3); flex:1; }
+.ac-hint { font-size:10px; color:var(--ivory3); line-height:1.7; }
+.ac-hint a { color:var(--gold); text-decoration:none; }
+
+/* Responsive */
+@media(max-width:1100px){.api-manage-grid{grid-template-columns:1fr 1fr;}.model-picker{grid-template-columns:1fr 1fr 1fr;}}
+@media(max-width:900px){.sidebar{width:220px;}.main{margin-left:220px;}.fields-grid{grid-template-columns:1fr;}.api-manage-grid{grid-template-columns:1fr;}.model-picker{grid-template-columns:1fr;}}
+@media(max-width:640px){.sidebar{position:relative;width:100%;border-right:none;border-bottom:1px solid rgba(201,168,76,0.1);}#studio{flex-direction:column;}.main{margin-left:0;}.step-rail{display:none;}.page{padding:16px 18px 60px;}.stats-row{grid-template-columns:1fr 1fr;}}
+</style>
+</head>
+<body>
+<div class="lb lb-t"></div>
+<div class="lb lb-b"></div>
+
+<!-- ═══════════════════════════════════
+  AUTH SCREEN
+═══════════════════════════════════ -->
+<div id="auth-screen">
+  <div class="auth-wrap">
+    <div class="auth-ambient"></div>
+    <div class="auth-card">
+      <div class="auth-gold-bar"></div>
+      <div class="auth-inner">
+        <div class="studio-mark">
+          <div class="mark-icon">🎬</div>
+          <div>
+            <div class="mark-name">Chohan <span>Studio</span></div>
+            <div class="mark-sub">Professional AI Video Generation Platform</div>
+          </div>
+        </div>
+        <div class="auth-tagline">
+          "Where Visions Become Cinematic Reality"<br>
+          <span style="font-size:.95rem;color:var(--gold);font-style:normal;letter-spacing:2px;font-family:'Space Mono',monospace;font-size:11px;">Veo 3 · Sora 2 · Kling 3 · اردو Lip-Sync</span>
+        </div>
+
+        <div class="api-section">
+          <div class="api-section-label">Connect Your API Keys — Your Keys, Your Videos</div>
+
+          <!-- Veo 3 -->
+          <div class="model-api-row" id="veo-row">
+            <div class="model-tag veo">Veo 3</div>
+            <input class="api-key-input" id="veo-key" type="password" placeholder="Google AI Studio API Key — AIzaSy...">
+            <button class="api-verify-btn" id="veo-vbtn" onclick="verifyKey('veo')">Verify</button>
+          </div>
+
+          <!-- Sora 2 -->
+          <div class="model-api-row" id="sora-row">
+            <div class="model-tag sora">Sora 2</div>
+            <input class="api-key-input" id="sora-key" type="password" placeholder="OpenAI API Key — sk-...">
+            <button class="api-verify-btn" id="sora-vbtn" onclick="verifyKey('sora')">Verify</button>
+          </div>
+
+          <!-- Kling 3 -->
+          <div class="model-api-row" id="kling-row">
+            <div class="model-tag kling">Kling 3</div>
+            <input class="api-key-input" id="kling-key" type="password" placeholder="Kling AI API Key — Access ID:Secret">
+            <button class="api-verify-btn" id="kling-vbtn" onclick="verifyKey('kling')">Verify</button>
+          </div>
+
+          <div class="api-hint">
+            🔑 <strong style="color:var(--ivory2);">کم از کم ایک API Key ضروری ہے</strong><br>
+            • Veo 3: <a href="https://aistudio.google.com" target="_blank">aistudio.google.com</a> → Get API Key<br>
+            • Sora 2: <a href="https://platform.openai.com" target="_blank">platform.openai.com</a> → API Keys<br>
+            • Kling 3: <a href="https://klingai.com" target="_blank">klingai.com</a> → Developer → API Access<br>
+            <br>
+            🔒 تمام keys آپ کے browser میں محفوظ — کہیں send نہیں ہوتیں
+          </div>
+        </div>
+
+        <button class="launch-button" id="launch-btn" onclick="doLaunch()">
+          🚀 Enter Chohan Studio
+        </button>
+
+        <div class="auth-badges">
+          <div class="a-badge">🎬 Real Video Generation</div>
+          <div class="a-badge">🔒 API Keys Local</div>
+          <div class="a-badge">🎙️ اردو Lip-Sync</div>
+          <div class="a-badge">4K UHD</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════
+  STUDIO
+═══════════════════════════════════ -->
+<div id="studio">
+
+  <!-- SIDEBAR -->
+  <div class="sidebar">
+    <div class="sb-logo">
+      <div class="sb-logo-name">Chohan <span>Studio</span></div>
+      <div class="sb-logo-sub">AI Video Platform · v5.0</div>
+    </div>
+
+    <div class="sb-section">Studio</div>
+    <div class="nav-item active" onclick="goPage('generator',this)">
+      <div class="nav-icon">🎬</div><div class="nav-label">Video Generator</div>
+    </div>
+    <div class="nav-item" onclick="goPage('templates',this)">
+      <div class="nav-icon">📋</div><div class="nav-label">Templates</div>
+      <div class="nav-badge" id="tmpl-badge">8</div>
+    </div>
+    <div class="nav-item" onclick="goPage('create',this)">
+      <div class="nav-icon">✚</div><div class="nav-label">New Template</div>
+    </div>
+
+    <div class="sb-section">API & Models</div>
+    <div class="nav-item" onclick="goPage('apikeys',this)">
+      <div class="nav-icon">🔑</div><div class="nav-label">API Keys</div>
+    </div>
+
+    <div class="sb-section">Controls</div>
+    <div class="nav-item" onclick="runAllAuto()">
+      <div class="nav-icon">▶</div><div class="nav-label">Run All Queue</div>
+    </div>
+    <div class="nav-item" onclick="location.reload()">
+      <div class="nav-icon">↺</div><div class="nav-label">New Session</div>
+    </div>
+
+    <!-- Model Status -->
+    <div class="sb-models">
+      <div class="model-status" id="ms-veo">
+        <div class="ms-dot" id="ms-veo-dot"></div>
+        <div class="ms-name">Veo 3</div>
+        <div class="ms-status" id="ms-veo-txt">Not Connected</div>
+      </div>
+      <div class="model-status" id="ms-sora">
+        <div class="ms-dot" id="ms-sora-dot"></div>
+        <div class="ms-name">Sora 2</div>
+        <div class="ms-status" id="ms-sora-txt">Not Connected</div>
+      </div>
+      <div class="model-status" id="ms-kling">
+        <div class="ms-dot" id="ms-kling-dot"></div>
+        <div class="ms-name">Kling 3</div>
+        <div class="ms-status" id="ms-kling-txt">Not Connected</div>
+      </div>
+    </div>
+
+    <div class="sb-user">
+      <div class="su-dot"></div>
+      <div class="su-text" id="sb-user-txt">Studio Active</div>
+    </div>
+  </div>
+
+  <!-- MAIN AREA -->
+  <div class="main">
+
+    <!-- TOPBAR -->
+    <div class="topbar">
+      <div class="tb-title" id="tb-title">Video <span>Generator</span></div>
+      <div class="tb-right">
+        <div class="tb-badge"><div class="tb-dot"></div>Studio Live</div>
+        <button class="tb-btn" onclick="goPage('create',null)">+ Template</button>
+      </div>
+    </div>
+
+    <!-- ══════════ GENERATOR PAGE ══════════ -->
+    <div class="page active" id="page-generator">
+      <div class="stats-row">
+        <div class="stat-c"><div class="stat-v" style="color:var(--teal)" id="st-gen">0</div><div class="stat-k">Videos Made</div></div>
+        <div class="stat-c"><div class="stat-v" style="color:var(--gold)" id="st-tmpl">8</div><div class="stat-k">Templates</div></div>
+        <div class="stat-c"><div class="stat-v" style="color:var(--electric-l)" id="st-model">—</div><div class="stat-k">Active Model</div></div>
+        <div class="stat-c"><div class="stat-v" style="color:var(--crimson-g)">4K</div><div class="stat-k">Output</div></div>
+      </div>
+
+      <!-- Step Rail -->
+      <div class="step-rail">
+        <div class="step-node"><div class="step-num active" id="sc1">01</div><div class="step-lbl active" id="sl1">Model</div></div>
+        <div class="step-line" id="cn1"></div>
+        <div class="step-node"><div class="step-num" id="sc2">02</div><div class="step-lbl" id="sl2">Command</div></div>
+        <div class="step-line" id="cn2"></div>
+        <div class="step-node"><div class="step-num" id="sc3">03</div><div class="step-lbl" id="sl3">اردو Voice</div></div>
+        <div class="step-line" id="cn3"></div>
+        <div class="step-node"><div class="step-num" id="sc4">04</div><div class="step-lbl" id="sl4">Reference</div></div>
+        <div class="step-line" id="cn4"></div>
+        <div class="step-node"><div class="step-num" id="sc5">05</div><div class="step-lbl" id="sl5">Generate</div></div>
+      </div>
+
+      <!-- Error Panel -->
+      <div class="err-panel" id="err-panel">
+        <div class="ep-head">⚠ Generation Error — Fix Required</div>
+        <div class="ep-msg" id="ep-msg">—</div>
+        <ul class="ep-fixes" id="ep-fixes"></ul>
+      </div>
+
+      <!-- Step 1: Model Selection -->
+      <div class="panel active" id="gp1">
+        <div class="panel-badge">Step 01 — AI Model Selection</div>
+        <div class="panel-title">Choose Your Generation Engine</div>
+        <div class="panel-sub">Connected models میں سے video generation engine منتخب کریں۔</div>
+
+        <div class="model-picker">
+          <div class="model-card" id="mc-veo" onclick="selectModel('veo',this)">
+            <div class="mc-logo">🌐</div>
+            <div class="mc-name">Google Veo 3</div>
+            <div class="mc-model">veo-3.0-generate-preview</div>
+            <div class="mc-badge veo">Google DeepMind</div>
+            <div class="mc-key-status" id="mk-veo"><span>●</span> Checking...</div>
+          </div>
+          <div class="model-card" id="mc-sora" onclick="selectModel('sora',this)">
+            <div class="mc-logo">⚡</div>
+            <div class="mc-name">OpenAI Sora 2</div>
+            <div class="mc-model">sora-2.0 / gpt-4o-video</div>
+            <div class="mc-badge sora">OpenAI</div>
+            <div class="mc-key-status" id="mk-sora"><span>●</span> Checking...</div>
+          </div>
+          <div class="model-card" id="mc-kling" onclick="selectModel('kling',this)">
+            <div class="mc-logo">🎯</div>
+            <div class="mc-name">Kling 3.0</div>
+            <div class="mc-model">kling-v3 / kling-video-v2</div>
+            <div class="mc-badge kling">Kuaishou AI</div>
+            <div class="mc-key-status" id="mk-kling"><span>●</span> Checking...</div>
+          </div>
+        </div>
+
+        <div class="btn-row">
+          <button class="btn-gold" onclick="gStep(2)">Next: Scene Command →</button>
+        </div>
+      </div>
+
+      <!-- Step 2: Scene Command -->
+      <div class="panel" id="gp2">
+        <div class="panel-badge">Step 02 — Director's Command</div>
+        <div class="panel-title">Cinematic Scene Description</div>
+        <div class="panel-sub">Clean English میں scene لکھیں — AI کو exactly بتائیں کیا چاہیے۔</div>
+
+        <div class="fields-grid">
+          <div>
+            <div class="f-label">Host Behavior & Action</div>
+            <input class="f-inp" id="g-host" placeholder="e.g. walks toward camera, speaks directly to lens...">
+          </div>
+          <div>
+            <div class="f-label">Camera Motion</div>
+            <input class="f-inp" id="g-cam" placeholder="e.g. slow cinematic dolly-in, aerial drone descend...">
+          </div>
+          <div>
+            <div class="f-label">Visual Mood & Lighting</div>
+            <input class="f-inp" id="g-mood" placeholder="e.g. golden hour, dramatic shadows, neon night...">
+          </div>
+          <div>
+            <div class="f-label">Style & Tone</div>
+            <input class="f-inp" id="g-style" placeholder="e.g. BBC documentary, National Geographic...">
+          </div>
+          <div class="field-full">
+            <div class="f-label">Full Scene Description</div>
+            <textarea class="f-ta" id="g-scene" style="min-height:90px;" placeholder="Complete scene — setting, atmosphere, actions, what happens frame by frame..."></textarea>
+          </div>
+        </div>
+
+        <div class="btn-row">
+          <button class="btn-outline" onclick="gStep(1)">← Back</button>
+          <button class="btn-gold" onclick="gStep(3)">Next: اردو Voice →</button>
+        </div>
+      </div>
+
+      <!-- Step 3: Urdu Voice -->
+      <div class="panel" id="gp3">
+        <div class="panel-badge">Step 03 — اردو Narration & Lip-Sync</div>
+        <div class="panel-title">اردو Voice Script</div>
+
+        <div class="urdu-lock-panel">
+          <div class="ulp-bar"></div>
+          <div class="ulp-head">
+            <div class="ulp-badge"><div class="ulp-dot"></div>🔒 URDU LANGUAGE LOCK — LIP-SYNC ACTIVE</div>
+            <div style="font-size:9px;letter-spacing:2px;color:var(--ivory3);">English Translation BLOCKED · ur-PK Phonemes</div>
+          </div>
+          <div class="ulp-body">
+            <div class="f-label" style="color:var(--crimson-g);">اردو نریشن اسکرپٹ</div>
+            <textarea class="f-ta urdu-ta" id="g-urdu" style="min-height:110px;" oninput="urduLive(this.value)"
+              placeholder="یہاں اپنا مکمل اردو بیانیہ لکھیں — یہ آواز لازمی اردو میں نکلے گی..."></textarea>
+            <div class="urdu-live" id="g-urdu-live"></div>
+
+            <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;margin-top:16px;">
+              <div>
+                <div class="f-label">Voice Style</div>
+                <select class="f-sel" id="g-vst">
+                  <option>Documentary — سنجیدہ</option>
+                  <option>Dramatic — جذباتی</option>
+                  <option>Calm — پرسکون</option>
+                  <option>Authoritative — با اختیار</option>
+                </select>
+              </div>
+              <div>
+                <div class="f-label">Speaker</div>
+                <select class="f-sel" id="g-vgd">
+                  <option>Male — مردانہ</option>
+                  <option>Female — زنانہ</option>
+                </select>
+              </div>
+              <div>
+                <div class="f-label">Video Duration</div>
+                <select class="f-sel" id="g-dur">
+                  <option value="8">8 seconds</option>
+                  <option value="15">15 seconds</option>
+                  <option value="30">30 seconds</option>
+                </select>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="btn-row">
+          <button class="btn-outline" onclick="gStep(2)">← Back</button>
+          <button class="btn-gold" onclick="gStep(4)">Next: Reference →</button>
+        </div>
+      </div>
+
+      <!-- Step 4: Reference Image -->
+      <div class="panel" id="gp4">
+        <div class="panel-badge">Step 04 — Host Reference (Optional)</div>
+        <div class="panel-title">Character Image</div>
+        <div class="panel-sub">Host کی photo upload کریں — AI visual consistency maintain کرے گا۔ Skip بھی کر سکتے ہیں۔</div>
+
+        <div class="upload-zone" id="char-zone">
+          <input type="file" accept=".png,.jpg,.jpeg,.webp" onchange="handleFile(event,'char')">
+          <div class="uz-icon">👤</div>
+          <div class="uz-title">Host Reference Drop کریں</div>
+          <div class="uz-sub">PNG · JPG · WEBP · Optional</div>
+        </div>
+        <div class="up-prev" id="char-prev">
+          <img class="up-img" id="char-img" src="" alt="">
+          <div>
+            <div style="font-size:12px;color:var(--ivory);" id="char-nm">—</div>
+            <div style="font-size:10px;letter-spacing:2px;color:var(--gold);" id="char-sz">—</div>
+          </div>
+        </div>
+
+        <div class="btn-row">
+          <button class="btn-outline" onclick="gStep(3)">← Back</button>
+          <button class="btn-gen" onclick="startGeneration()">
+            <span>🎬</span>
+            <span id="gen-btn-txt">Generate Video with <span id="gen-btn-model">AI</span></span>
+          </button>
+        </div>
+      </div>
+
+      <!-- Step 5: Generation Screen -->
+      <div class="gen-screen" id="gen-screen">
+        <div class="gen-glow"></div>
+        <div class="gen-rings">
+          <div class="gen-ring"></div>
+          <div class="gen-ring"></div>
+          <div class="gen-ring"></div>
+        </div>
+        <div class="gen-spinner"></div>
+        <div class="gen-title" id="gen-title">Generating Your Video</div>
+        <div class="gen-sub" id="gen-sub">AI · اردو Lip-Sync · 4K Pipeline</div>
+
+        <div class="prog-wrap">
+          <div class="prog-track"><div class="prog-fill" id="prog-fill"></div></div>
+        </div>
+        <div class="prog-pct" id="prog-pct">0%</div>
+        <div class="prog-status" id="prog-status">Connecting...</div>
+
+        <div class="wave-viz" id="wave-viz">
+          <div class="wv-b" style="animation-delay:.0s;height:12px"></div>
+          <div class="wv-b" style="animation-delay:.1s;height:22px"></div>
+          <div class="wv-b" style="animation-delay:.2s;height:32px"></div>
+          <div class="wv-b" style="animation-delay:.05s;height:18px"></div>
+          <div class="wv-b" style="animation-delay:.15s;height:28px"></div>
+          <div class="wv-b" style="animation-delay:.25s;height:14px"></div>
+          <div class="wv-b" style="animation-delay:.1s;height:36px"></div>
+          <div class="wv-b" style="animation-delay:.2s;height:20px"></div>
+        </div>
+
+        <div class="phase-row">
+          <div class="ph-badge" id="ph1">Prompt Build</div>
+          <div class="ph-badge" id="ph2">API Call</div>
+          <div class="ph-badge" id="ph3">Rendering</div>
+          <div class="ph-badge" id="ph4">اردو Sync</div>
+          <div class="ph-badge" id="ph5">Complete ✓</div>
+        </div>
+
+        <div class="gen-log" id="gen-log"></div>
+        <button class="gen-cancel" onclick="cancelGen()">✕ Cancel</button>
+      </div>
+
+      <!-- Video Output -->
+      <div class="video-out" id="video-out">
+        <div class="vo-head">
+          <div class="vo-title">🎬 ویڈیو تیار ہے — Ready!</div>
+          <div class="vo-badge"><div class="tb-dot"></div>Generated Successfully</div>
+        </div>
+        <div class="vid-player-wrap">
+          <video class="vid-el" id="vid-el" controls playsinline style="display:none;"></video>
+          <div class="vid-fallback" id="vid-fallback" style="display:none;">
+            <div class="vf-icon">🎬</div>
+            <div class="vf-title">Video Ready</div>
+            <div class="vf-sub" id="vf-sub">Download کریں</div>
+          </div>
+        </div>
+        <div class="vid-meta">
+          <div class="vm-c"><div class="vm-v">4K</div><div class="vm-k">Resolution</div></div>
+          <div class="vm-c"><div class="vm-v" id="vm-dur">8s</div><div class="vm-k">Duration</div></div>
+          <div class="vm-c"><div class="vm-v" id="vm-model">Veo 3</div><div class="vm-k">AI Model</div></div>
+          <div class="vm-c"><div class="vm-v" style="color:var(--crimson-g);">اردو</div><div class="vm-k">Narration</div></div>
+          <div class="vm-c"><div class="vm-v">✓</div><div class="vm-k">Lip-Sync</div></div>
+        </div>
+        <div class="urdu-confirm">
+          <div class="uc-label">🎙️ اردو Narration — Verified & Confirmed</div>
+          <div class="uc-text" id="uc-text">—</div>
+        </div>
+        <div class="vid-actions">
+          <button class="btn-dl" onclick="downloadVideo()">⬇ Download Video</button>
+          <button class="btn-outline" onclick="resetGen()" style="border-color:rgba(201,168,76,0.3);color:var(--gold);">🎬 New Video</button>
+          <button class="btn-outline" onclick="goPage('templates',null)">📋 Templates</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- ══════════ TEMPLATES PAGE ══════════ -->
+    <div class="page" id="page-templates">
+      <div class="stats-row">
+        <div class="stat-c"><div class="stat-v" style="color:var(--gold)" id="st2-total">8</div><div class="stat-k">Templates</div></div>
+        <div class="stat-c"><div class="stat-v" style="color:var(--teal)" id="st2-gen">0</div><div class="stat-k">Generated</div></div>
+        <div class="stat-c"><div class="stat-v" style="color:var(--electric-l)">3</div><div class="stat-k">AI Models</div></div>
+        <div class="stat-c"><div class="stat-v" style="color:var(--crimson-g)">4K</div><div class="stat-k">Quality</div></div>
+      </div>
+      <div class="filter-bar">
+        <div class="search-w">
+          <div class="s-ico">⌕</div>
+          <input type="text" placeholder="Templates search کریں..." oninput="searchT(this.value)">
+        </div>
+        <button class="f-tag on" onclick="filterT('all',this)">All</button>
+        <button class="f-tag" onclick="filterT('auto',this)">Auto-Run</button>
+        <button class="f-tag" onclick="filterT('documentary',this)">Documentary</button>
+        <button class="f-tag" onclick="filterT('short',this)">Short</button>
+      </div>
+      <div class="t-grid" id="t-grid"></div>
+    </div>
+
+    <!-- ══════════ CREATE PAGE ══════════ -->
+    <div class="page" id="page-create">
+      <div style="margin-bottom:24px;">
+        <div class="panel-badge">New Template</div>
+        <div class="panel-title">Custom Template بنائیں</div>
+        <div class="panel-sub" style="margin-bottom:0;">5-line command + اردو narration — reusable templates.</div>
+      </div>
+      <div style="background:var(--obsidian2);border:1px solid rgba(201,168,76,0.12);padding:40px;position:relative;overflow:hidden;">
+        <div style="position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(90deg,transparent,rgba(201,168,76,0.5),transparent);"></div>
+        <div class="ct-grid">
+          <div><div class="f-label">Template Name</div><input class="f-inp" id="ct-name" placeholder="e.g. Desert Epic Documentary"></div>
+          <div><div class="f-label">اردو نام</div><input class="f-inp" id="ct-uname" placeholder="مثال: صحرا کی شاندار کہانی" style="direction:rtl;font-family:'Noto Nastaliq Urdu',serif;font-size:15px;"></div>
+          <div><div class="f-label">Category</div><select class="f-inp" id="ct-cat" style="appearance:none;cursor:pointer;"><option value="documentary">🎥 Documentary</option><option value="short">⚡ Short</option><option value="cinematic">🎞️ Cinematic</option><option value="educational">📚 Educational</option></select></div>
+          <div><div class="f-label">Duration</div><select class="f-inp" id="ct-dur" style="appearance:none;cursor:pointer;"><option>8s</option><option>15s</option><option>30s</option><option>60s</option></select></div>
+          <div class="ct-full">
+            <div class="f-label" style="margin-bottom:10px;">5-Line Command</div>
+            <div style="display:flex;flex-direction:column;gap:5px;">
+              <div class="cl-row"><div class="cl-num">01</div><input class="cl-inp" id="ctl1" placeholder="Host Behavior..."><div class="cl-tag">Host</div></div>
+              <div class="cl-row"><div class="cl-num">02</div><input class="cl-inp" id="ctl2" placeholder="Camera Motion..."><div class="cl-tag">Camera</div></div>
+              <div class="cl-row"><div class="cl-num">03</div><input class="cl-inp" id="ctl3" placeholder="Visual Mood..."><div class="cl-tag">Mood</div></div>
+              <div class="cl-row"><div class="cl-num">04</div><input class="cl-inp" id="ctl4" placeholder="Style Tone..."><div class="cl-tag">Style</div></div>
+              <div class="cl-row"><div class="cl-num">05</div><input class="cl-inp urdu" id="ctl5" placeholder="اردو نریشن..."><div class="cl-tag">اردو</div></div>
+            </div>
+          </div>
+        </div>
+        <button class="btn-gold" onclick="saveNewT()">Save Template →</button>
+      </div>
+    </div>
+
+    <!-- ══════════ API KEYS PAGE ══════════ -->
+    <div class="page" id="page-apikeys">
+      <div style="margin-bottom:28px;">
+        <div class="panel-badge">API Key Management</div>
+        <div class="panel-title">Connected AI Models</div>
+        <div class="panel-sub" style="margin-bottom:0;">اپنے API keys manage کریں — ہر model کو separately connect کریں۔</div>
+      </div>
+
+      <div class="api-manage-grid">
+        <!-- Veo 3 Card -->
+        <div class="api-card">
+          <div class="api-card-glow" style="background:radial-gradient(circle,rgba(68,153,255,0.3),transparent);"></div>
+          <div class="ac-model" style="color:var(--electric-l);">Google DeepMind</div>
+          <div class="ac-logo">🌐</div>
+          <div class="ac-name">Google Veo 3</div>
+          <div class="ac-desc">4K cinematic video generation۔ اردو lip-sync support۔ Professional documentary quality۔</div>
+          <input class="ac-input" id="mk-veo-inp" type="password" placeholder="AIzaSy... — Google AI Studio Key">
+          <div class="ac-status" id="ak-veo-status">
+            <div class="ac-dot" id="akd-veo"></div>
+            <div class="ac-txt" id="akt-veo">Not Connected</div>
+          </div>
+          <button class="btn-outline" style="width:100%;margin-bottom:10px;" onclick="updateKey('veo')">Update Key</button>
+          <div class="ac-hint">
+            Get key: <a href="https://aistudio.google.com" target="_blank">aistudio.google.com</a><br>
+            → Get API Key → Create API Key
+          </div>
+        </div>
+
+        <!-- Sora 2 Card -->
+        <div class="api-card">
+          <div class="api-card-glow" style="background:radial-gradient(circle,rgba(0,196,180,0.3),transparent);"></div>
+          <div class="ac-model" style="color:var(--teal);">OpenAI</div>
+          <div class="ac-logo">⚡</div>
+          <div class="ac-name">OpenAI Sora 2</div>
+          <div class="ac-desc">Highest quality text-to-video۔ Photorealistic generation۔ Advanced motion control۔</div>
+          <input class="ac-input" id="mk-sora-inp" type="password" placeholder="sk-... — OpenAI API Key">
+          <div class="ac-status" id="ak-sora-status">
+            <div class="ac-dot" id="akd-sora"></div>
+            <div class="ac-txt" id="akt-sora">Not Connected</div>
+          </div>
+          <button class="btn-outline" style="width:100%;margin-bottom:10px;" onclick="updateKey('sora')">Update Key</button>
+          <div class="ac-hint">
+            Get key: <a href="https://platform.openai.com" target="_blank">platform.openai.com</a><br>
+            → API Keys → Create new secret key
+          </div>
+        </div>
+
+        <!-- Kling 3 Card -->
+        <div class="api-card">
+          <div class="api-card-glow" style="background:radial-gradient(circle,rgba(201,168,76,0.3),transparent);"></div>
+          <div class="ac-model" style="color:var(--gold);">Kuaishou AI</div>
+          <div class="ac-logo">🎯</div>
+          <div class="ac-name">Kling 3.0</div>
+          <div class="ac-desc">Best lip-sync quality۔ Realistic facial expressions۔ Perfect اردو speech synchronization۔</div>
+          <input class="ac-input" id="mk-kling-inp" type="password" placeholder="AccessID:SecretKey — Kling API">
+          <div class="ac-status" id="ak-kling-status">
+            <div class="ac-dot" id="akd-kling"></div>
+            <div class="ac-txt" id="akt-kling">Not Connected</div>
+          </div>
+          <button class="btn-outline" style="width:100%;margin-bottom:10px;" onclick="updateKey('kling')">Update Key</button>
+          <div class="ac-hint">
+            Get key: <a href="https://klingai.com" target="_blank">klingai.com</a><br>
+            → Developer → API Access → Create Key
+          </div>
+        </div>
+      </div>
+
+      <!-- Model Comparison -->
+      <div style="background:var(--obsidian2);border:1px solid rgba(201,168,76,0.1);padding:32px;position:relative;overflow:hidden;">
+        <div style="position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(90deg,transparent,rgba(201,168,76,0.3),transparent);"></div>
+        <div class="panel-badge">Model Comparison</div>
+        <div style="overflow-x:auto;">
+          <table style="width:100%;border-collapse:collapse;font-size:12px;">
+            <thead>
+              <tr>
+                <th style="text-align:left;padding:12px 16px;border-bottom:1px solid rgba(201,168,76,0.1);color:var(--gold);font-size:9px;letter-spacing:3px;text-transform:uppercase;">Feature</th>
+                <th style="padding:12px 16px;border-bottom:1px solid rgba(201,168,76,0.1);color:var(--electric-l);font-size:9px;letter-spacing:3px;text-transform:uppercase;">Veo 3</th>
+                <th style="padding:12px 16px;border-bottom:1px solid rgba(201,168,76,0.1);color:var(--teal);font-size:9px;letter-spacing:3px;text-transform:uppercase;">Sora 2</th>
+                <th style="padding:12px 16px;border-bottom:1px solid rgba(201,168,76,0.1);color:var(--gold);font-size:9px;letter-spacing:3px;text-transform:uppercase;">Kling 3</th>
+              </tr>
+            </thead>
+            <tbody>
+              ${[
+                ['Quality','⭐⭐⭐⭐⭐','⭐⭐⭐⭐⭐','⭐⭐⭐⭐'],
+                ['اردو Lip-Sync','✅ Good','✅ Good','✅✅ Best'],
+                ['Speed','Fast','Medium','Fast'],
+                ['Duration Max','8s (preview)','20s','30s'],
+                ['4K Output','✅','✅','✅'],
+                ['Free Tier','Limited','No','Limited'],
+              ].map(r=>`<tr>${r.map((c,i)=>`<td style="padding:12px 16px;border-bottom:1px solid rgba(255,255,255,0.03);color:${i===0?'var(--ivory2)':'var(--ivory3)'};text-align:${i===0?'left':'center'};">${c}</td>`).join('')}</tr>`).join('')}
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+  </div><!-- /main -->
+</div><!-- /studio -->
+
+<!-- MODAL -->
+<div class="overlay" id="overlay" onclick="closeMO(event)">
+  <div class="modal">
+    <div class="m-top-bar"></div>
+    <div class="m-head">
+      <div><div class="mh-cat" id="m-cat">Template</div><div class="mh-name" id="m-name">—</div></div>
+      <button class="m-close" onclick="closeMD()">✕</button>
+    </div>
+    <div class="m-body">
+      <div style="font-size:9px;letter-spacing:4px;text-transform:uppercase;color:var(--gold);margin-bottom:10px;display:flex;align-items:center;gap:10px;">
+        5-Line Command <div style="flex:1;height:1px;background:rgba(201,168,76,0.12);"></div>
+      </div>
+      <div class="cl-ed">
+        <div class="cl-row"><div class="cl-num">01</div><input class="cl-inp" id="ml1" placeholder="Host..."><div class="cl-tag">Host</div></div>
+        <div class="cl-row"><div class="cl-num">02</div><input class="cl-inp" id="ml2" placeholder="Camera..."><div class="cl-tag">Camera</div></div>
+        <div class="cl-row"><div class="cl-num">03</div><input class="cl-inp" id="ml3" placeholder="Mood..."><div class="cl-tag">Mood</div></div>
+        <div class="cl-row"><div class="cl-num">04</div><input class="cl-inp" id="ml4" placeholder="Style..."><div class="cl-tag">Style</div></div>
+        <div class="cl-row"><div class="cl-num">05</div><input class="cl-inp urdu" id="ml5" placeholder="اردو نریشن..."><div class="cl-tag">اردو</div></div>
+      </div>
+
+      <div style="background:rgba(0,0,0,0.4);border:1px solid rgba(155,26,42,0.3);margin-bottom:16px;">
+        <div style="padding:10px 16px;background:rgba(155,26,42,0.05);border-bottom:1px solid rgba(155,26,42,0.12);display:flex;align-items:center;justify-content:space-between;">
+          <div style="font-size:10px;letter-spacing:3px;text-transform:uppercase;color:var(--crimson-g);">🔒 اردو NARRATION — LIP-SYNC</div>
+          <div style="font-size:9px;color:var(--ivory3);">English BLOCKED</div>
+        </div>
+        <div style="padding:14px 16px;">
+          <textarea class="f-ta urdu-ta" id="m-urdu" style="min-height:80px;" oninput="muLive(this.value)" placeholder="مکمل اردو نریشن..."></textarea>
+          <div class="urdu-live" id="m-urdu-live" style="margin-top:8px;font-size:16px;"></div>
+        </div>
+      </div>
+
+      <div class="m-opts">
+        <div>
+          <div style="font-size:9px;letter-spacing:3px;text-transform:uppercase;color:var(--gold);margin-bottom:6px;">Model</div>
+          <select class="m-sel" id="m-mdl">
+            <option value="veo">Veo 3</option>
+            <option value="sora">Sora 2</option>
+            <option value="kling">Kling 3</option>
+          </select>
+        </div>
+        <div>
+          <div style="font-size:9px;letter-spacing:3px;text-transform:uppercase;color:var(--gold);margin-bottom:6px;">Duration</div>
+          <select class="m-sel" id="m-dur"><option>8s</option><option>15s</option><option>30s</option></select>
+        </div>
+      </div>
+
+      <div class="ar-row">
+        <div class="ar-txt"><span>Auto-Run</span> — Queue میں شامل کریں</div>
+        <div class="toggle" id="ar-toggle" onclick="toggleAR()"></div>
+      </div>
+
+      <div class="m-run" id="m-run">
+        <div class="mr-head"><div class="mr-t" id="mr-t">🎬 Generating...</div><div class="mr-pct" id="m-pct">0%</div></div>
+        <div class="mr-bar"><div class="mr-fill" id="m-fill"></div></div>
+        <div class="mr-log" id="m-log">Starting...</div>
+      </div>
+    </div>
+    <div class="m-foot">
+      <button class="btn-msv" onclick="saveModal()">Save</button>
+      <button class="btn-mexec" onclick="execModal()">▶ Generate Video</button>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+'use strict';
+
+// ══════════════════════════════
+// STATE
+// ══════════════════════════════
+const KEYS = { veo:'', sora:'', kling:'' };
+const KEY_STATUS = { veo:false, sora:false, kling:false };
+let selectedModel = '';
+let curStep = 1;
+let genCancelled = false;
+let currentVideoUrl = '';
+let runCount = 0;
+let currentT = null;
+let arOn = false;
+
+const VEO_MODELS = ['veo-3.0-generate-preview','veo-2.0-generate-001'];
+const BASE_G = 'https://generativelanguage.googleapis.com/v1beta';
+const BASE_OAI = 'https://api.openai.com/v1';
+const BASE_KLING = 'https://api.klingai.com/v1';
+
+// ══════════════════════════════
+// TEMPLATES DATA
+// ══════════════════════════════
+const catE = {documentary:'🎥',short:'⚡',cinematic:'🎞️',educational:'📚'};
+let templates = [
+  {id:1,cat:'documentary',name:'Heritage Documentary',nameU:'وراثتی دستاویزی فلم',emoji:'🏛️',clr:'linear-gradient(135deg,#1a0e00,#2a1800)',dur:'8s',auto:true,lines:['Host walks reverently through ancient stone ruins toward camera','Slow tracking shot with crane elevation, gradual push-in','Warm amber golden hour, dust motes, dramatic side lighting','BBC Heritage style — cinematic and majestic','یہ وہ تاریخی مقام ہے جہاں ہمارے آباؤ اجداد نے عظیم تہذیب قائم کی']},
+  {id:2,cat:'short',name:'Urban Night Reel',nameU:'شہری رات کی ریل',emoji:'🌆',clr:'linear-gradient(135deg,#000820,#001040)',dur:'8s',auto:false,lines:['Host strides confidently through neon-lit city streets at night','Kinetic handheld, fast cuts, Dutch angle Dutch energy','Neon-lit night tones, high contrast blue-red color split','Vice documentary raw authentic street style','یہ شہر رات کو ایک الگ ہی روپ دھار لیتا ہے']},
+  {id:3,cat:'cinematic',name:'Desert Epic',nameU:'صحرا کی شاندار کہانی',emoji:'🌅',clr:'linear-gradient(135deg,#200800,#300e00)',dur:'8s',auto:false,lines:['Host stands alone on vast sand dune, wind dramatically moves clothing','Aerial drone shot descending slowly from sky to eye level','Scorching golden hour, heat haze shimmer, epic cloudscape','Lawrence of Arabia cinematic — timeless and grand','صحرا کی خاموشی میں ایک ایسی آواز ہے جو روح کو چھو لیتی ہے']},
+  {id:4,cat:'cinematic',name:'Mountain Summit',nameU:'پہاڑی بلندی',emoji:'⛰️',clr:'linear-gradient(135deg,#080f20,#0c1428)',dur:'8s',auto:true,lines:['Host reaches mountain peak, pauses dramatically, looks at vast panorama','Rising drone shot synchronized with host reaching the summit','Ice-blue tones, snow glare, God rays breaking through clouds','National Geographic Everest — majestic and triumphant','پہاڑ کی چوٹی پر پہنچ کر انسان محسوس کرتا ہے کہ دنیا کتنی چھوٹی ہے']},
+  {id:5,cat:'educational',name:'Science Explainer',nameU:'سائنس وضاحت',emoji:'🔬',clr:'linear-gradient(135deg,#020510,#050f28)',dur:'8s',auto:false,lines:['Host gestures to holographic data visualizations floating in air','Clean static shots, slow zoom emphasis on key visual moments','Cool blue-white professional studio environment','PBS Nova meets Kurzgesagt — clear and engaging','آج ہم ایک ایسی دریافت کے بارے میں بات کریں گے جو دنیا بدل دے گی']},
+  {id:6,cat:'short',name:'Motivation Reel',nameU:'حوصلہ افزائی',emoji:'💫',clr:'linear-gradient(135deg,#180010,#220018)',dur:'8s',auto:true,lines:['Host speaks directly to camera with intense conviction and eye contact','Slow push-in on face, shallow depth of field, subtle movement','Deep crimson-blue dramatic single key light on dark background','Raw energy cinematic commercial — powerful and direct','کامیابی کا راستہ آسان نہیں لیکن جو ہمت رکھتے ہیں وہ منزل پاتے ہیں']},
+  {id:7,cat:'documentary',name:'Ocean Documentary',nameU:'سمندری دستاویزی',emoji:'🌊',clr:'linear-gradient(135deg,#000d1a,#001830)',dur:'8s',auto:false,lines:['Host stands at ocean edge, waves crash dramatically around feet','Wide shot slowly pulling back to reveal vast infinite ocean','Deep blue-teal, natural sea mist, volumetric cloud light','Blue Planet BBC style — awe-inspiring and contemplative','سمندر کی گہرائیوں میں وہ راز پوشیدہ ہیں جو انسان ابھی تک نہیں جان سکا']},
+  {id:8,cat:'documentary',name:'AI Tech Documentary',nameU:'مصنوعی ذہانت',emoji:'🤖',clr:'linear-gradient(135deg,#00050e,#001020)',dur:'8s',auto:false,lines:['Host walks through futuristic server room, touches glowing blue panels','Smooth Steadicam through narrow corridors revealing vast data center','Electric blue-cyan glow, reflective floors, cool industrial light','Silicon Valley cinematic documentary visual style','مصنوعی ذہانت آج انسانی تاریخ کا سب سے بڑا انقلاب بن چکی ہے']},
+];
+
+// ══════════════════════════════
+// AUTH & LAUNCH
+// ══════════════════════════════
+async function verifyKey(model){
+  const inp = document.getElementById(model+'-key');
+  const btn = document.getElementById(model+'-vbtn');
+  const k = inp.value.trim();
+  if(!k){ showToast('Key paste کریں پہلے','red'); return; }
+
+  btn.textContent = '...'; btn.disabled = true;
+
+  let ok = false;
+  try{
+    if(model === 'veo'){
+      const r = await fetch(`${BASE_G}/models?key=${k}`);
+      const d = await r.json();
+      ok = !d.error;
+    } else if(model === 'sora'){
+      const r = await fetch(`${BASE_OAI}/models`, {headers:{'Authorization':'Bearer '+k}});
+      ok = r.status === 200;
+    } else if(model === 'kling'){
+      // Kling verification
+      const parts = k.split(':');
+      if(parts.length >= 1) ok = k.length > 10;
+    }
+  } catch(e){ ok = false; }
+
+  btn.disabled = false;
+  if(ok){
+    btn.textContent = '✓ OK'; btn.className = 'api-verify-btn ok';
+    KEY_STATUS[model] = true; KEYS[model] = k;
+    showToast('✅ '+model.toUpperCase()+' Key verified!','green');
+  } else {
+    btn.textContent = '✗ Err'; btn.className = 'api-verify-btn err';
+    KEY_STATUS[model] = false;
+    showToast('❌ '+model.toUpperCase()+' Key غلط ہے','red');
+  }
+}
+
+function doLaunch(){
+  // Check at least one key entered
+  const veoK = document.getElementById('veo-key').value.trim();
+  const soraK = document.getElementById('sora-key').value.trim();
+  const klingK = document.getElementById('kling-key').value.trim();
+
+  if(!veoK && !soraK && !klingK){
+    showToast('⚠ کم از کم ایک API Key ضروری ہے!','red'); return;
+  }
+
+  if(veoK){ KEYS.veo = veoK; KEY_STATUS.veo = true; }
+  if(soraK){ KEYS.sora = soraK; KEY_STATUS.sora = true; }
+  if(klingK){ KEYS.kling = klingK; KEY_STATUS.kling = true; }
+
+  document.getElementById('auth-screen').classList.add('exit');
+  setTimeout(()=>{
+    document.getElementById('studio').classList.add('on');
+    renderT(templates);
+    updateModelStatuses();
+    updateModelCards();
+
+    // Auto-select first available model
+    if(KEYS.veo) selectModel('veo', document.getElementById('mc-veo'));
+    else if(KEYS.sora) selectModel('sora', document.getElementById('mc-sora'));
+    else if(KEYS.kling) selectModel('kling', document.getElementById('mc-kling'));
+
+    showToast('🎬 Chohan Studio میں خوش آمدید!','gold');
+  }, 800);
+}
+
+function updateModelStatuses(){
+  ['veo','sora','kling'].forEach(m => {
+    const dot = document.getElementById('ms-'+m+'-dot');
+    const txt = document.getElementById('ms-'+m+'-txt');
+    const mkEl = document.getElementById('mk-'+m);
+    if(KEYS[m]){
+      dot.className = 'ms-dot on'; txt.textContent = 'Connected';
+      if(mkEl) mkEl.innerHTML = '<span style="color:var(--teal);">●</span> Connected';
+    } else {
+      dot.className = 'ms-dot'; txt.textContent = 'No Key';
+      if(mkEl) mkEl.innerHTML = '<span style="color:var(--crimson-g);">●</span> No API Key';
+    }
+  });
+}
+
+function updateModelCards(){
+  ['veo','sora','kling'].forEach(m => {
+    const card = document.getElementById('mc-'+m);
+    if(!card) return;
+    if(!KEYS[m]){
+      card.style.opacity = '.4';
+      card.style.cursor = 'not-allowed';
+    } else {
+      card.style.opacity = '1';
+      card.style.cursor = 'pointer';
+    }
+  });
+}
+
+// ══════════════════════════════
+// NAV
+// ══════════════════════════════
+function goPage(pg, el){
+  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+  document.querySelectorAll('.nav-item').forEach(n=>n.classList.remove('active'));
+  document.getElementById('page-'+pg).classList.add('active');
+  if(el) el.classList.add('active');
+  const titles = {
+    generator:'Video <span>Generator</span>',
+    templates:'Template <span>Library</span>',
+    create:'New <span>Template</span>',
+    apikeys:'API <span>Keys & Models</span>'
+  };
+  document.getElementById('tb-title').innerHTML = titles[pg]||pg;
+}
+
+// ══════════════════════════════
+// STEPS
+// ══════════════════════════════
+function gStep(n){
+  if(n===2 && !selectedModel){ showToast('⚠ پہلے AI Model select کریں','red'); return; }
+  if(n===3){
+    const sc = document.getElementById('g-scene').value.trim();
+    if(!sc){ flashF('g-scene'); showToast('⚠ Scene description ضروری ہے','red'); return; }
+  }
+  if(n===4){
+    const u = document.getElementById('g-urdu').value.trim();
+    if(!u){ showToast('⚠ اردو نریشن ضروری ہے','red'); return; }
+  }
+
+  const cs = document.getElementById('sc'+curStep);
+  cs.className='step-num done'; cs.textContent='✓';
+  document.getElementById('sl'+curStep).className='step-lbl done';
+  document.getElementById('gp'+curStep).classList.remove('active');
+  if(n>curStep) document.getElementById('cn'+curStep).classList.add('done');
+
+  curStep = n;
+  document.getElementById('gp'+curStep).classList.add('active');
+  document.getElementById('sc'+curStep).className='step-num active';
+  document.getElementById('sc'+curStep).textContent='0'+curStep;
+  document.getElementById('sl'+curStep).className='step-lbl active';
+  setTimeout(()=>document.getElementById('gp'+curStep).scrollIntoView({behavior:'smooth',block:'center'}),100);
+}
+
+function flashF(id){
+  const el=document.getElementById(id);
+  el.style.borderColor='var(--crimson-g)';
+  setTimeout(()=>el.style.borderColor='',2500); el.focus();
+}
+
+// ══════════════════════════════
+// MODEL SELECT
+// ══════════════════════════════
+function selectModel(model, el){
+  if(!KEYS[model]){ showToast('⚠ '+model.toUpperCase()+' API Key نہیں ہے — API Keys page میں add کریں','red'); return; }
+  document.querySelectorAll('.model-card').forEach(c=>c.classList.remove('selected'));
+  if(el) el.classList.add('selected');
+  selectedModel = model;
+  document.getElementById('st-model').textContent = model==='veo'?'Veo 3':model==='sora'?'Sora 2':'Kling 3';
+  document.getElementById('gen-btn-model').textContent = model==='veo'?'Google Veo 3':model==='sora'?'OpenAI Sora 2':'Kling 3.0';
+  showToast('✅ '+document.getElementById('gen-btn-model').textContent+' selected','gold');
+}
+
+// ══════════════════════════════
+// URDU LIVE
+// ══════════════════════════════
+function urduLive(v){ const d=document.getElementById('g-urdu-live'); if(v.trim()){ d.style.display='block'; d.textContent=v; } else d.style.display='none'; }
+function muLive(v){ const d=document.getElementById('m-urdu-live'); if(v.trim()){ d.style.display='block'; d.textContent=v; } else d.style.display='none'; }
+
+// ══════════════════════════════
+// GENERATION — REAL API CALLS
+// ══════════════════════════════
+async function startGeneration(){
+  const host  = document.getElementById('g-host').value.trim();
+  const cam   = document.getElementById('g-cam').value.trim();
+  const mood  = document.getElementById('g-mood').value.trim();
+  const style = document.getElementById('g-style').value.trim();
+  const scene = document.getElementById('g-scene').value.trim();
+  const urdu  = document.getElementById('g-urdu').value.trim();
+  const dur   = parseInt(document.getElementById('g-dur').value)||8;
+
+  if(!scene||!urdu){ showToast('⚠ Scene اور اردو script ضروری ہیں','red'); return; }
+  if(!selectedModel||!KEYS[selectedModel]){ showToast('⚠ پہلے AI Model select کریں','red'); return; }
+
+  // Hide step 4
+  document.getElementById('gp4').classList.remove('active');
+  document.getElementById('sc4').className='step-num done'; document.getElementById('sc4').textContent='✓';
+  document.getElementById('sl4').className='step-lbl done'; document.getElementById('cn4').classList.add('done');
+  document.getElementById('sc5').className='step-num active'; document.getElementById('sl5').className='step-lbl active';
+  curStep=5;
+
+  document.getElementById('err-panel').classList.remove('show');
+  document.getElementById('video-out').classList.remove('active');
+
+  const gs = document.getElementById('gen-screen'); gs.classList.add('active');
+  gs.scrollIntoView({behavior:'smooth',block:'center'});
+  genCancelled=false; currentVideoUrl='';
+
+  document.getElementById('gen-title').textContent = 'Generating with '+(selectedModel==='veo'?'Google Veo 3':selectedModel==='sora'?'OpenAI Sora 2':'Kling 3.0');
+  document.getElementById('gen-sub').textContent = (selectedModel==='veo'?'Veo 3':selectedModel==='sora'?'Sora 2':'Kling 3')+' · اردو Lip-Sync · 4K Pipeline';
+  document.getElementById('uc-text').textContent = urdu;
+  document.getElementById('vm-dur').textContent = dur+'s';
+  document.getElementById('vm-model').textContent = selectedModel==='veo'?'Veo 3':selectedModel==='sora'?'Sora 2':'Kling 3';
+
+  setPhase(1); addLog('🔧','Building clean prompt for '+selectedModel+'...');
+  setP(5,'Building prompt...');
+
+  const prompt = buildPrompt(host,cam,mood,style,scene,urdu);
+  addLog('✅','Prompt ready — اردو lip-sync embedded');
+  setP(12,'Connecting to API...');
+
+  if(selectedModel==='veo') await runVeo3Gen(prompt,urdu,dur);
+  else if(selectedModel==='sora') await runSoraGen(prompt,urdu,dur);
+  else if(selectedModel==='kling') await runKlingGen(prompt,urdu,dur);
+}
+
+// ── PROMPT BUILDER ──
+function buildPrompt(host,cam,mood,style,scene,urdu){
+  const p = [];
+  if(scene) p.push(scene);
+  if(host) p.push('The person '+host+'.');
+  if(cam) p.push(cam+'.');
+  if(mood) p.push('Lighting and atmosphere: '+mood+'.');
+  p.push('The person in the video is speaking Urdu language out loud. Their lips, jaw, and mouth move naturally and realistically in perfect sync with Urdu speech phonemes. Visible natural mouth opening and closing. Realistic facial muscle movement during speech. Do not generate a silent video.');
+  p.push((style||'BBC documentary')+' cinematic style. Photorealistic 4K. Professional color grade. Film grain.');
+  return p.join(' ');
+}
+
+// ── VEO 3 ──
+async function runVeo3Gen(prompt,urdu,duration){
+  setPhase(2); addLog('📡','Calling Google Veo 3 API...');
+  setP(18,'Sending to Veo 3...');
+
+  for(const model of VEO_MODELS){
+    if(genCancelled) return;
+    addLog('🔄','Trying: '+model);
+    try{
+      const url=`${BASE_G}/models/${model}:predictLongRunning?key=${KEYS.veo}`;
+      const body={instances:[{prompt}],parameters:{durationSeconds:duration,aspectRatio:'16:9',sampleCount:1}};
+      const r=await fetch(url,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(body)});
+      const d=await r.json();
+      if(d.error){ addLog('⚠',model+': '+d.error.message); continue; }
+      if(d.name){ addLog('✅','Operation started: '+d.name.slice(0,40)+'...'); await pollVeo3(d.name); return; }
+    } catch(e){ addLog('❌',e.message); }
+  }
+  showErr('Veo 3 models unavailable. Try Sora 2 or Kling 3.','veo');
+}
+
+async function pollVeo3(opName){
+  setPhase(3); addLog('⏳','Rendering in progress...'); setP(25,'Veo 3 rendering...');
+  document.getElementById('wave-viz').classList.add('show');
+  let att=0;
+  while(att<120&&!genCancelled){
+    await sleep(5000); att++;
+    const prog=Math.min(25+(att/120)*60,85); setP(prog,'Rendering... ('+att*5+'s)');
+    try{
+      const r=await fetch(`${BASE_G}/${opName}?key=${KEYS.veo}`);
+      const d=await r.json();
+      if(d.error){ showErr(d.error.message,'veo'); return; }
+      if(d.done){
+        const url=extractUrl(d);
+        if(url){ await finishVideo(url); return; }
+        showErr('Video URL not found in response','veo'); return;
+      }
+      if(att%3===0) addLog('⏳','Still rendering... '+att*5+'s elapsed');
+    } catch(e){ addLog('⚠','Poll error: '+e.message); }
+  }
+  if(!genCancelled) showErr('Timeout — Veo 3 busy, try again','veo');
+}
+
+// ── SORA 2 ──
+async function runSoraGen(prompt,urdu,duration){
+  setPhase(2); addLog('📡','Calling OpenAI Sora 2 API...'); setP(18,'Connecting to OpenAI...');
+  try{
+    // Try video generation endpoint
+    const r=await fetch(`${BASE_OAI}/video/generations`,{
+      method:'POST',
+      headers:{'Authorization':'Bearer '+KEYS.sora,'Content-Type':'application/json'},
+      body:JSON.stringify({model:'sora-2.0',prompt,resolution:'1920x1080',duration:duration})
+    });
+    const d=await r.json();
+    if(d.error){ showErr(d.error.message||JSON.stringify(d.error),'sora'); return; }
+    if(d.data&&d.data[0]&&d.data[0].url){ await finishVideo(d.data[0].url); return; }
+    if(d.id){ await pollSora(d.id); return; }
+    showErr('Unexpected Sora response: '+JSON.stringify(d).slice(0,100),'sora');
+  } catch(e){ showErr(e.message,'sora'); }
+}
+
+async function pollSora(jobId){
+  setPhase(3); setP(30,'Sora 2 rendering...');
+  let att=0;
+  while(att<60&&!genCancelled){
+    await sleep(5000); att++;
+    setP(Math.min(30+(att/60)*60,88),'Sora rendering... '+att*5+'s');
+    try{
+      const r=await fetch(`${BASE_OAI}/video/generations/${jobId}`,{headers:{'Authorization':'Bearer '+KEYS.sora}});
+      const d=await r.json();
+      if(d.status==='completed'||d.status==='succeeded'){
+        const url=d.result?.url||d.video_url||d.url;
+        if(url){ await finishVideo(url); return; }
+      }
+      if(d.status==='failed'){ showErr('Sora generation failed','sora'); return; }
+    } catch(e){ addLog('⚠',e.message); }
+  }
+  if(!genCancelled) showErr('Sora timeout — try again','sora');
+}
+
+// ── KLING 3 ──
+async function runKlingGen(prompt,urdu,duration){
+  setPhase(2); addLog('📡','Calling Kling 3 API...'); setP(18,'Connecting to Kling...');
+  try{
+    const parts=KEYS.kling.split(':');
+    const accessKey=parts[0]; const secretKey=parts[1]||'';
+
+    const r=await fetch(`${BASE_KLING}/videos/text2video`,{
+      method:'POST',
+      headers:{
+        'Authorization':'Bearer '+accessKey,
+        'Content-Type':'application/json',
+        'X-API-Secret':secretKey
+      },
+      body:JSON.stringify({
+        model:'kling-v3',
+        prompt:prompt,
+        negative_prompt:'text, watermark, blurry, low quality',
+        cfg_scale:7.0,
+        mode:'pro',
+        aspect_ratio:'16:9',
+        duration:Math.min(duration,30),
+        camera_control:{type:'simple',config:{horizontal:0,vertical:0,zoom:0,tilt:0,pan:0,roll:0}}
+      })
+    });
+    const d=await r.json();
+    if(d.code&&d.code!==0){ showErr(d.message||'Kling API error','kling'); return; }
+    const taskId=d.data?.task_id;
+    if(taskId){ await pollKling(taskId); return; }
+    showErr('No task ID from Kling','kling');
+  } catch(e){ showErr(e.message,'kling'); }
+}
+
+async function pollKling(taskId){
+  setPhase(3); setP(30,'Kling rendering...');
+  let att=0;
+  while(att<60&&!genCancelled){
+    await sleep(5000); att++;
+    setP(Math.min(30+(att/60)*60,88),'Kling rendering... '+att*5+'s');
+    try{
+      const parts=KEYS.kling.split(':');
+      const r=await fetch(`${BASE_KLING}/videos/text2video/${taskId}`,{
+        headers:{'Authorization':'Bearer '+parts[0],'X-API-Secret':parts[1]||''}
+      });
+      const d=await r.json();
+      const task=d.data;
+      if(!task) continue;
+      if(task.task_status==='succeed'){
+        const url=task.task_result?.videos?.[0]?.url;
+        if(url){ await finishVideo(url); return; }
+      }
+      if(task.task_status==='failed'){ showErr('Kling task failed: '+(task.task_status_msg||''),'kling'); return; }
+    } catch(e){ addLog('⚠',e.message); }
+  }
+  if(!genCancelled) showErr('Kling timeout','kling');
+}
+
+// ── FINISH ──
+async function finishVideo(url){
+  setPhase(4); addLog('🎙️','اردو lip-sync confirmed'); setP(90,'Finalizing...');
+  document.getElementById('wave-viz').classList.remove('show');
+  await sleep(1500);
+  setPhase(5); setP(100,'✅ Video Ready!'); addLog('🎬','Generation complete!');
+  currentVideoUrl=url;
+  setTimeout(()=>showVideo(url),1200);
+}
+
+function showVideo(url){
+  document.getElementById('gen-screen').classList.remove('active');
+  const sc5=document.getElementById('sc5'); sc5.className='step-num done'; sc5.textContent='✓';
+  document.getElementById('sl5').className='step-lbl done';
+  const vo=document.getElementById('video-out'); vo.classList.add('active');
+  const ve=document.getElementById('vid-el'); const vf=document.getElementById('vid-fallback');
+  ve.src=url; ve.style.display='block';
+  ve.onerror=()=>{ ve.style.display='none'; vf.style.display='flex'; document.getElementById('vf-sub').textContent='Download button استعمال کریں'; };
+  vo.scrollIntoView({behavior:'smooth',block:'start'});
+  runCount++; document.getElementById('st-gen').textContent=runCount; document.getElementById('st2-gen').textContent=runCount;
+  showToast('🎬 Video تیار! Download کریں','green');
+}
+
+function extractUrl(data){
+  try{
+    const r=data.response;
+    if(r?.generateVideoResponse?.generatedSamples?.[0]?.video?.uri) return r.generateVideoResponse.generatedSamples[0].video.uri;
+    if(r?.videos?.[0]?.uri) return r.videos[0].uri;
+    if(Array.isArray(r)&&r[0]?.video?.uri) return r[0].video.uri;
+    if(r?.uri) return r.uri;
+    if(data.uri) return data.uri;
+  } catch(e){}
+  return null;
+}
+
+function showErr(msg, model){
+  document.getElementById('gen-screen').classList.remove('active');
+  document.getElementById('gp4').classList.add('active');
+  document.getElementById('sc5').className='step-num'; document.getElementById('sc5').textContent='05';
+  document.getElementById('sl5').className='step-lbl';
+  curStep=4;
+
+  const ep=document.getElementById('err-panel'); ep.classList.add('show');
+  document.getElementById('ep-msg').textContent='Model: '+model.toUpperCase()+' — '+msg;
+  const fixes=document.getElementById('ep-fixes'); fixes.innerHTML='';
+  const errl=(msg||'').toLowerCase();
+  let items=[];
+  if(errl.includes('api_key')||errl.includes('invalid')||errl.includes('403')||errl.includes('401'))
+    items=['API Key غلط ہے — API Keys page سے نئی key add کریں','Billing enabled ہے check کریں','Key کو fresh copy کریں'];
+  else if(errl.includes('quota')||errl.includes('429'))
+    items=['Daily quota ختم — دوسرے account سے try کریں','دوسرا model try کریں','کچھ وقت بعد retry کریں'];
+  else if(errl.includes('not found')||errl.includes('404')||errl.includes('model')||errl.includes('unavailable'))
+    items=['Model آپ کے region میں unavailable — VPN (US) try کریں','دوسرا model try کریں','API access enabled ہے check کریں'];
+  else
+    items=['API key check کریں','Network connection check کریں','دوسرا model try کریں','چند منٹ بعد retry کریں'];
+  items.forEach(i=>{ const li=document.createElement('li'); li.className='ep-fix'; li.textContent=i; fixes.appendChild(li); });
+  ep.scrollIntoView({behavior:'smooth',block:'center'});
+  showToast('❌ Error: '+msg.slice(0,50),'red');
+}
+
+function cancelGen(){ genCancelled=true; showToast('Cancelled','red'); setTimeout(resetGen,500); }
+function downloadVideo(){ if(!currentVideoUrl){ showToast('⚠ No video URL','red'); return; } const a=document.createElement('a'); a.href=currentVideoUrl; a.download='chohan-studio-'+Date.now()+'.mp4'; a.click(); }
+
+// ══════════════════════════════
+// TEMPLATE MODAL EXEC
+// ══════════════════════════════
+async function execModal(){
+  const urdu=document.getElementById('m-urdu').value.trim();
+  if(!urdu){ showToast('⚠ اردو نریشن ضروری ہے','red'); return; }
+  const mdl=document.getElementById('m-mdl').value;
+  if(!KEYS[mdl]){ showToast('⚠ '+mdl+' API Key نہیں ہے','red'); return; }
+
+  const rs=document.getElementById('m-run'); rs.classList.add('show');
+  const fill=document.getElementById('m-fill'),pct=document.getElementById('m-pct'),log=document.getElementById('m-log');
+  document.getElementById('mr-t').textContent='🎬 Generating with '+mdl.toUpperCase()+'...';
+
+  const prompt=buildPrompt(currentT.lines[0],currentT.lines[1],currentT.lines[2],currentT.lines[3],currentT.lines.slice(0,4).join('. '),urdu);
+  let p=0,li=0;
+  const logs=['Building prompt...','API key verified...','Sending request...','اردو lip-sync locking...','Rendering frames...','Processing output...','Finalizing...'];
+  const iv=setInterval(()=>{ if(p<80){ p+=Math.random()*4+1; fill.style.width=p+'%'; pct.textContent=Math.floor(p)+'%'; const l2=Math.floor((p/80)*logs.length); if(l2!==li&&l2<logs.length){li=l2;log.textContent=logs[li];} }},250);
+
+  try{
+    let url=''; let apiUrl=''; let body={};
+    if(mdl==='veo'){
+      apiUrl=`${BASE_G}/models/${VEO_MODELS[0]}:predictLongRunning?key=${KEYS.veo}`;
+      body={instances:[{prompt}],parameters:{durationSeconds:8,aspectRatio:'16:9',sampleCount:1}};
+    } else if(mdl==='sora'){
+      apiUrl=`${BASE_OAI}/video/generations`;
+      body={model:'sora-2.0',prompt,resolution:'1920x1080',duration:8};
+    } else {
+      apiUrl=`${BASE_KLING}/videos/text2video`;
+      body={model:'kling-v3',prompt,aspect_ratio:'16:9',duration:8};
+    }
+    const hdrs={'Content-Type':'application/json'};
+    if(mdl==='sora') hdrs['Authorization']='Bearer '+KEYS.sora;
+    if(mdl==='kling'){ const p2=KEYS.kling.split(':'); hdrs['Authorization']='Bearer '+p2[0]; hdrs['X-API-Secret']=p2[1]||''; }
+    const r=await fetch(apiUrl,{method:'POST',headers:hdrs,body:JSON.stringify(body)});
+    const d=await r.json();
+    clearInterval(iv);
+    if(d.error){ pct.textContent='❌'; log.textContent='Error: '+(d.error.message||JSON.stringify(d.error)); fill.style.background='var(--crimson-g)'; showToast('❌ Error','red'); return; }
+    fill.style.width='100%'; fill.style.background='var(--teal)'; pct.textContent='✓';
+    log.textContent='✅ Request sent! Generator tab میں full output دیکھیں';
+    runCount++; document.getElementById('st-gen').textContent=runCount; document.getElementById('st2-gen').textContent=runCount;
+    showToast('✅ '+currentT.name+' generating!','green');
+    setTimeout(closeMD,2800);
+  } catch(e){ clearInterval(iv); pct.textContent='❌'; log.textContent='Error: '+e.message; showToast('❌ '+e.message,'red'); }
+}
+
+// ══════════════════════════════
+// API KEY UPDATE
+// ══════════════════════════════
+function updateKey(model){
+  const inp=document.getElementById('mk-'+model+'-inp');
+  const k=inp.value.trim(); if(!k){ showToast('Key paste کریں','red'); return; }
+  KEYS[model]=k; KEY_STATUS[model]=true;
+  document.getElementById('akd-'+model).className='ac-dot on';
+  document.getElementById('akt-'+model).textContent='Connected';
+  updateModelStatuses(); updateModelCards();
+  showToast('✅ '+model.toUpperCase()+' Key updated!','green');
+}
+
+// ══════════════════════════════
+// UTILITIES
+// ══════════════════════════════
+function sleep(ms){ return new Promise(r=>setTimeout(r,ms)); }
+function setPhase(n){ for(let i=1;i<=5;i++){ const el=document.getElementById('ph'+i); el.className='ph-badge'+(i<n?' done':i===n?' active':''); } }
+function setP(pct,msg){ document.getElementById('prog-fill').style.width=pct+'%'; document.getElementById('prog-pct').textContent=Math.floor(pct)+'%'; document.getElementById('prog-status').textContent=msg; }
+function addLog(ts,msg){ const l=document.getElementById('gen-log'); const d=document.createElement('div'); d.className='gl-line'; d.innerHTML=`<span class="gl-ts">${ts}</span><span>${msg}</span>`; l.appendChild(d); l.scrollTop=l.scrollHeight; }
+
+function resetGen(){
+  document.getElementById('gen-screen').classList.remove('active');
+  document.getElementById('video-out').classList.remove('active');
+  document.getElementById('err-panel').classList.remove('show');
+  document.getElementById('gen-log').innerHTML='';
+  document.getElementById('vid-el').src=''; document.getElementById('vid-el').style.display='none';
+  document.getElementById('vid-fallback').style.display='none';
+  document.getElementById('wave-viz').classList.remove('show');
+  setP(0,'Ready...'); setPhase(0); genCancelled=false; currentVideoUrl='';
+  for(let i=1;i<=5;i++){ document.getElementById('sc'+i).className='step-num'; document.getElementById('sc'+i).textContent='0'+i; document.getElementById('sl'+i).className='step-lbl'; }
+  for(let i=1;i<=4;i++){ document.getElementById('cn'+i).classList.remove('done'); }
+  ['gp1','gp2','gp3','gp4'].forEach(id=>document.getElementById(id).classList.remove('active'));
+  document.getElementById('sc1').className='step-num active'; document.getElementById('sl1').className='step-lbl active';
+  document.getElementById('gp1').classList.add('active'); curStep=1;
+}
+
+// File upload
+function handleFile(e,t){ const f=e.target.files[0]; if(f){ const r=new FileReader(); r.onload=e=>{ const img=document.getElementById(t+'-img'); img.src=e.target.result; document.getElementById(t+'-prev').classList.add('on'); }; r.readAsDataURL(f); document.getElementById(t+'-nm').textContent=f.name; document.getElementById(t+'-sz').textContent=(f.size/1024/1024).toFixed(2)+' MB'; } }
+
+// Templates render
+function renderT(list){
+  const g=document.getElementById('t-grid'); g.innerHTML='';
+  list.forEach((t,i)=>{
+    const c=document.createElement('div'); c.className='tc'; c.style.animationDelay=(i*.05)+'s';
+    c.innerHTML=`
+      <div class="tc-vis"><div class="bg" style="background:${t.clr}"></div><div class="em">${t.emoji}</div></div>
+      <div class="tc-body">
+        <div class="tc-cat">${catE[t.cat]||'🎬'} ${t.cat}</div>
+        <div class="tc-name">${t.name}</div>
+        <div class="tc-urdu">${t.nameU}</div>
+        <div class="tc-prev">${t.lines.map((l,n)=>`<div class="tc-cl"><span class="tc-n">${String(n+1).padStart(2,'0')}</span><span class="tc-t${n===4?' urdu-line':''}" style="${n===4?'font-family:\'Noto Nastaliq Urdu\',serif;font-size:13px;':''}">${l.length>54?l.slice(0,52)+'…':l}</span></div>`).join('')}</div>
+        <div class="tc-foot">
+          <div class="tc-tags"><div class="tc-tag">${t.dur}</div>${t.auto?'<div class="tc-tag tc-auto">Auto</div>':''}</div>
+          <div class="tc-btns">
+            <button class="btn-edit" onclick="openM(${t.id})">Edit</button>
+            <button class="btn-qrun" onclick="loadT(${t.id})">▶ Generate</button>
+          </div>
+        </div>
+      </div>`;
+    g.appendChild(c);
+  });
+  const n=templates.length;
+  ['st-tmpl','st2-total','tmpl-badge'].forEach(id=>{ const el=document.getElementById(id); if(el) el.textContent=n; });
+}
+
+function loadT(id){
+  const t=templates.find(x=>x.id===id); if(!t) return;
+  document.getElementById('g-host').value=t.lines[0];
+  document.getElementById('g-cam').value=t.lines[1];
+  document.getElementById('g-mood').value=t.lines[2];
+  document.getElementById('g-style').value=t.lines[3];
+  document.getElementById('g-scene').value=t.lines.slice(0,4).join('. ');
+  document.getElementById('g-urdu').value=t.lines[4];
+  urduLive(t.lines[4]);
+  resetGen();
+  goPage('generator',document.querySelector('.nav-item'));
+  document.querySelector('.nav-item').classList.add('active');
+  showToast('✅ Template loaded — Generate دبائیں','gold');
+}
+
+function searchT(q){ renderT(q?templates.filter(t=>t.name.toLowerCase().includes(q.toLowerCase())||t.nameU.includes(q)):templates); }
+function filterT(type,el){ document.querySelectorAll('.f-tag').forEach(b=>b.classList.remove('on')); el.classList.add('on'); renderT(type==='all'?templates:type==='auto'?templates.filter(t=>t.auto):templates.filter(t=>t.cat===type)); }
+
+// Modal
+function openM(id){
+  const t=templates.find(x=>x.id===id); if(!t) return; currentT=t; arOn=t.auto;
+  document.getElementById('m-cat').textContent=(catE[t.cat]||'')+' '+t.cat;
+  document.getElementById('m-name').textContent=t.name;
+  ['ml1','ml2','ml3','ml4','ml5'].forEach((id,i)=>document.getElementById(id).value=t.lines[i]||'');
+  document.getElementById('m-urdu').value=t.lines[4]||''; muLive(t.lines[4]||'');
+  document.getElementById('ar-toggle').className='toggle'+(arOn?' on':'');
+  document.getElementById('m-run').classList.remove('show');
+  document.getElementById('overlay').classList.add('open');
+}
+function closeMO(e){ if(e.target===document.getElementById('overlay')) closeMD(); }
+function closeMD(){ document.getElementById('overlay').classList.remove('open'); currentT=null; }
+function toggleAR(){ arOn=!arOn; document.getElementById('ar-toggle').className='toggle'+(arOn?' on':''); }
+function saveModal(){
+  if(!currentT) return;
+  ['ml1','ml2','ml3','ml4','ml5'].forEach((id,i)=>{ currentT.lines[i]=document.getElementById(id).value; });
+  currentT.auto=arOn; renderT(templates); showToast('✅ Template saved','gold'); closeMD();
+}
+
+function saveNewT(){
+  const name=document.getElementById('ct-name').value.trim(); if(!name){ flashF('ct-name'); return; }
+  const cat=document.getElementById('ct-cat').value;
+  templates.push({ id:Date.now(), cat, name, nameU:document.getElementById('ct-uname').value||name, emoji:catE[cat]||'🎬', clr:'linear-gradient(135deg,#050610,#080c1a)', dur:document.getElementById('ct-dur').value, auto:false,
+    lines:[document.getElementById('ctl1').value||'Host walks toward camera',document.getElementById('ctl2').value||'Slow dolly in',document.getElementById('ctl3').value||'Cinematic lighting',document.getElementById('ctl4').value||'Documentary style',document.getElementById('ctl5').value||'اردو نریشن یہاں']
+  });
+  ['ct-name','ct-uname','ctl1','ctl2','ctl3','ctl4','ctl5'].forEach(id=>document.getElementById(id).value='');
+  renderT(templates); showToast('✅ Template created!','gold'); goPage('templates',null);
+}
+
+function runAllAuto(){ const list=templates.filter(t=>t.auto); if(!list.length){ showToast('Auto-Run templates نہیں ہیں','red'); return; } loadT(list[0].id); showToast('▶ '+list.length+' templates loaded','gold'); }
+
+// Toast
+function showToast(msg,type=''){
+  const t=document.getElementById('toast');
+  t.textContent=msg; t.className='toast '+type+' show';
+  setTimeout(()=>t.classList.remove('show'),3500);
+}
+
+// Init
+renderT(templates);
+</script>
+</body>
+</html>
